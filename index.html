@@ -1,0 +1,343 @@
+<!doctype html>
+<title>Badminton Schema</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<div id="pick-players">
+  <h1>Spelare:</h1>
+  <div style="display: flex; flex-wrap: wrap">
+    <div>
+      <h2>Tillgängliga</h2>
+      <ul id="available-players">
+        <li>Arne Georgzen</li>
+        <li>Bengt Östlund</li>
+        <li>Curt Dagh</li>
+        <li>Benny Stener</li>
+        <li>Birger Kareliusson</li>
+        <li>Emil Eklund</li>
+        <li>Christer Svalin</li>
+        <li>Dan Enarsson</li>
+        <li>Göran Bernhardsson</li>
+        <li>Jan Lundevall</li>
+        <li>Jesper Gustavsson</li>
+        <li>Jonas Borgman</li>
+        <li>Leif Persson</li>
+        <li>Kjell Evert Martinsson</li>
+        <li>Mikael Wikman</li>
+        <li>Per Sandberg</li>
+        <li>Peter Törnqvist</li>
+        <li>Reinhold Dånmark</li>
+        <li>Simon Wikman</li>
+        <li>Stefan Bernhardsson</li>
+        <li>Sören Källström</li>
+        <form style="display: flex">
+          <input id="freeform-add" type="text" />
+          <input type="submit" value="Lägg till" />
+        </form>
+      </ul>
+    </div>
+    <div>
+      <h2>Valda spelare</h2>
+      <ul id="picked-players"></ul>
+    </div>
+  </div>
+
+  <button id="start">Start!</button>
+</div>
+
+<style>
+  html,
+  body {
+    font-family: Monospace;
+    font-size: 12px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    overflow-y: scroll;
+    background-color: #eee;
+  }
+
+  button {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 400px;
+    padding: 8px;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  li {
+    display: block;
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 6px;
+    margin: 16px;
+    background-color: white;
+  }
+
+  #pick-players {
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  #available-players li {
+    cursor: pointer;
+  }
+
+  #schedule nav {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #schedule nav div {
+    flex: 1 1 auto;
+    font-size: 32px;
+    text-align: center;
+  }
+
+  #schedule button {
+    width: 90px;
+  }
+
+  #rounds {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    flex-wrap: wrap;
+  }
+
+  .match {
+    flex: 0 0 300px;
+    overflow: hidden;
+    padding: 16px;
+    box-sizing: border-box;
+    margin: 16px;
+  }
+
+  .match h2 {
+    margin-top: 0;
+  }
+
+  .team {
+    height: 100px;
+    border: 8px solid gray;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    display: flex;
+  }
+
+  .team div:nth-child(2) {
+    border-left: 3px dotted gray;
+  }
+
+  .team div {
+    padding: 16px;
+    width: 150px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #resting {
+    font-size: 16px;
+  }
+</style>
+
+<script type="module">
+  import schedule from "./schedule.js"
+
+  const pickPlayersView = document.querySelector("#pick-players")
+  const pickedPlayers = document.querySelector("#picked-players")
+  const availablePlayers = document.querySelector("#available-players")
+  const freeformAdd = document.querySelector("#freeform-add")
+
+  document.querySelector("form").addEventListener("submit", (e) => {
+    const li = document.createElement("li")
+    li.textContent = freeformAdd.value
+    pickedPlayers.appendChild(li)
+    freeformAdd.value = ``
+
+    e.preventDefault()
+
+    return false
+  })
+
+  for (let el of [...document.querySelectorAll("#available-players > li")]) {
+    function add() {
+      function remove() {
+        availablePlayers.prepend(this)
+        this.removeEventListener("click", remove)
+        this.addEventListener("click", add)
+      }
+
+      pickedPlayers.appendChild(this)
+      this.removeEventListener("click", add)
+      this.addEventListener("click", remove)
+    }
+    el.addEventListener("click", add)
+  }
+
+  document.querySelector("#start").addEventListener("click", (e) => {
+    let players = [...pickedPlayers.children].reduce((acc, player) => {
+      acc.push(player.textContent)
+      return acc
+    }, [])
+
+    if (players % 2 == 1) {
+      // ensure we have even teams (in essence, means someone will be playing singles sometimes)
+      players.push(``)
+    }
+
+    shuffle(players)
+
+    const rounds = schedule(players)
+    let currentRound = 0
+
+    let el = document.createElement(`div`)
+    el.id = "schedule"
+    document.body.appendChild(el)
+
+    showRound()
+
+    function showRound() {
+      pickPlayersView.style.display = "none"
+      el.innerHTML = ``
+
+      const nav = document.createElement("nav")
+      const back = Object.assign(document.createElement("button"), {
+        id: "back",
+        innerHTML: "Tillbaka",
+      })
+      const roundTitle = Object.assign(document.createElement("div"), {
+        id: "current-round",
+        textContent: `Runda: ${currentRound}`,
+      })
+      const next = Object.assign(document.createElement("button"), {
+        id: "next",
+        innerHTML: "Nästa",
+      })
+
+      nav.appendChild(back)
+      nav.appendChild(roundTitle)
+      nav.appendChild(next)
+
+      el.appendChild(nav)
+
+      back.addEventListener("click", () => {
+        if (currentRound === 0) {
+          el.remove()
+          pickPlayersView.style.display = ""
+        } else {
+          currentRound -= 1
+          showRound()
+        }
+      })
+
+      next.addEventListener("click", () => {
+        currentRound = currentRound + 1
+        showRound()
+      })
+
+      const roundsEl = Object.assign(document.createElement("div"), {
+        id: "rounds",
+      })
+
+      const match = rounds[currentRound % rounds.length]
+
+      for (const m of match.matches) {
+        const matchEl = document.createElement("div")
+        matchEl.className = "match"
+        const title = document.createElement("h2")
+        title.textContent = "Bana " + m.court
+        matchEl.appendChild(title)
+
+        const team1 = Object.assign(document.createElement("div"), {
+          className: "team",
+        })
+        const team2 = Object.assign(document.createElement("div"), {
+          className: "team",
+        })
+
+        if (m.type === `doubles`) {
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team1[0],
+            })
+          )
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team1[1],
+            })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team2[0],
+            })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team2[1],
+            })
+          )
+        } else if (m.type === `two_vs_one`) {
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team[0],
+            })
+          )
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team[1],
+            })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.single,
+            })
+          )
+        } else if (m.type === `singles`) {
+          team1.appendChild(
+            Object.assign(document.createElement("div"), { textContent: m.p1 })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), { textContent: m.p2 })
+          )
+        }
+
+        matchEl.appendChild(team1)
+        matchEl.appendChild(team2)
+
+        roundsEl.appendChild(matchEl)
+      }
+
+      console.log(match)
+      if (match.rest.length > 0) {
+        const resting = document.createElement(`div`)
+        resting.id = `resting`
+        resting.textContent = `😴 ${match.rest.join(`, `)} vilar 😴`
+        roundsEl.appendChild(resting)
+      }
+
+      el.appendChild(roundsEl)
+    }
+  })
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[array[i], array[j]] = [array[j], array[i]] // swap
+    }
+    return array
+  }
+</script>
