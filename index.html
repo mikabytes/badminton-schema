@@ -110,11 +110,15 @@
   }
 
   #rounds {
+    position: absolute;
     display: flex;
-    align-items: center;
     justify-content: center;
     height: 100%;
     flex-wrap: wrap;
+    width: 100%;
+    top: 40px;
+    height: calc(100% - 40px);
+    overflow-y: scroll;
   }
 
   .match {
@@ -152,6 +156,39 @@
 
   #resting {
     font-size: 16px;
+  }
+
+  .slide-in-right {
+    animation: ease-in-out 500ms forwards slide-in-right;
+  }
+
+  .slide-in-left {
+    animation: ease-in-out 500ms reverse slide-out-left;
+  }
+
+  .slide-out-left {
+    animation: ease-in-out 500ms forwards slide-out-left;
+  }
+
+  .slide-out-right {
+    animation: ease-in-out 500ms reverse slide-in-right;
+  }
+
+  @keyframes slide-in-right {
+    0% {
+      left: 100%;
+    }
+    100% {
+      left: 0;
+    }
+  }
+  @keyframes slide-out-left {
+    0% {
+      left: 0%;
+    }
+    100% {
+      left: -100%;
+    }
   }
 </style>
 
@@ -211,9 +248,13 @@
 
     showRound()
 
-    function showRound() {
+    function showRound(fromLeft) {
       pickPlayersView.style.display = "none"
-      el.innerHTML = ``
+
+      const prevNav = el.querySelector(`nav`)
+      if (prevNav) {
+        prevNav.remove()
+      }
 
       const nav = document.createElement("nav")
       const back = Object.assign(document.createElement("button"), {
@@ -222,7 +263,7 @@
       })
       const roundTitle = Object.assign(document.createElement("div"), {
         id: "current-round",
-        textContent: `Runda: ${currentRound}`,
+        textContent: `Runda: ${currentRound + 1}`,
       })
       const next = Object.assign(document.createElement("button"), {
         id: "next",
@@ -234,21 +275,6 @@
       nav.appendChild(next)
 
       el.appendChild(nav)
-
-      back.addEventListener("click", () => {
-        if (currentRound === 0) {
-          el.remove()
-          pickPlayersView.style.display = ""
-        } else {
-          currentRound -= 1
-          showRound()
-        }
-      })
-
-      next.addEventListener("click", () => {
-        currentRound = currentRound + 1
-        showRound()
-      })
 
       const roundsEl = Object.assign(document.createElement("div"), {
         id: "rounds",
@@ -322,7 +348,6 @@
         roundsEl.appendChild(matchEl)
       }
 
-      console.log(match)
       if (match.rest.length > 0) {
         const resting = document.createElement(`div`)
         resting.id = `resting`
@@ -330,7 +355,61 @@
         roundsEl.appendChild(resting)
       }
 
+      if (fromLeft) {
+        roundsEl.classList.add(`slide-in-left`)
+      } else {
+        roundsEl.classList.add(`slide-in-right`)
+      }
+      setTimeout(() => {
+        roundsEl.classList.remove(`slide-in-left`)
+        roundsEl.classList.remove(`slide-in-right`)
+      }, 500)
+
       el.appendChild(roundsEl)
+
+      function goBack() {
+        if (currentRound === 0) {
+          el.remove()
+          pickPlayersView.style.display = ""
+        } else {
+          currentRound -= 1
+          roundsEl.classList.add(`slide-out-right`)
+          setTimeout(() => roundsEl.remove(), 500)
+          showRound(true)
+        }
+      }
+
+      function goNext() {
+        currentRound = currentRound + 1
+        roundsEl.classList.add(`slide-out-left`)
+        setTimeout(() => roundsEl.remove(), 500)
+        showRound()
+      }
+
+      back.addEventListener("click", goBack)
+      next.addEventListener("click", goNext)
+
+      // swipe actions
+      let startX = 0
+      let startY = 0
+
+      roundsEl.addEventListener("pointerdown", (e) => {
+        startX = e.clientX
+        startY = e.clientY
+      })
+
+      roundsEl.addEventListener("pointerup", (e) => {
+        const dx = e.clientX - startX
+        const dy = e.clientY - startY
+
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+          if (dx > 0) {
+            goBack()
+          } else {
+            goNext()
+          }
+        }
+      })
     }
   })
 
