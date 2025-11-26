@@ -61,7 +61,15 @@ export default function schedule(players) {
   const pairRounds = generateCirclePairs(extendedPlayers)
   const rounds = []
 
-  for (const roundPairs of pairRounds) {
+  // --- tracking fairness for singles (only used when mod === 2) ---
+  const singlesCount = {}
+  const lastSinglesRound = {}
+  for (const p of players) {
+    singlesCount[p] = 0
+    lastSinglesRound[p] = -Infinity
+  }
+
+  for (const [roundIndex, roundPairs] of pairRounds.entries()) {
     const round = { matches: [], rest: [] }
 
     if (mod === 0) {
@@ -80,7 +88,44 @@ export default function schedule(players) {
     } else if (mod === 2) {
       // N = 4k + 2: last pair becomes singles
       const pairs = roundPairs.slice()
-      const singlesPair = pairs.pop() // last pair
+
+      // Choose which pair becomes singles:
+      // - prefer players with lower singlesCount
+      // - avoid players who played singles last round
+      let bestIndex = 0
+      let bestScore = Infinity
+
+      for (let i = 0; i < pairs.length; i++) {
+        const [p1, p2] = pairs[i]
+        // safety: BYE should never appear in mod===2 case
+        if (p1 === BYE || p2 === BYE) continue
+
+        const maxCount = Math.max(singlesCount[p1], singlesCount[p2])
+        const consecutivePenalty =
+          (lastSinglesRound[p1] === roundIndex - 1 ? 1 : 0) +
+          (lastSinglesRound[p2] === roundIndex - 1 ? 1 : 0)
+
+        // tuned weights: big weight on maxCount, smaller on consecutivePenalty
+        const score = maxCount * 100 + consecutivePenalty * 10 + i
+
+        if (score < bestScore) {
+          bestScore = score
+          bestIndex = i
+        }
+      }
+
+      const singlesPair = pairs.splice(bestIndex, 1)[0]
+      const [sp1, sp2] = singlesPair
+
+      // update tracking
+      if (sp1 in singlesCount) {
+        singlesCount[sp1]++
+        lastSinglesRound[sp1] = roundIndex
+      }
+      if (sp2 in singlesCount) {
+        singlesCount[sp2]++
+        lastSinglesRound[sp2] = roundIndex
+      }
 
       // doubles from remaining pairs
       for (let i = 0; i < pairs.length; i += 2) {
@@ -99,8 +144,8 @@ export default function schedule(players) {
       round.matches.push({
         type: "singles",
         court: round.matches.length + 1,
-        p1,
-        p2,
+        p1: sp1,
+        p2: sp2,
       })
     } else if (mod === 1) {
       // N = 4k + 1: one player rests (paired with BYE)

@@ -8,27 +8,27 @@
     <div>
       <h2>Tillgängliga</h2>
       <ul id="available-players">
-        <li>Arne Georgzen</li>
-        <li>Bengt Östlund</li>
-        <li>Curt Dagh</li>
-        <li>Benny Stener</li>
-        <li>Birger Kareliusson</li>
-        <li>Emil Eklund</li>
-        <li>Christer Svalin</li>
-        <li>Dan Enarsson</li>
-        <li>Göran Bernhardsson</li>
-        <li>Jan Lundevall</li>
-        <li>Jesper Gustavsson</li>
-        <li>Jonas Borgman</li>
-        <li>Leif Persson</li>
-        <li>Kjell Evert Martinsson</li>
-        <li>Mikael Wikman</li>
-        <li>Per Sandberg</li>
-        <li>Peter Törnqvist</li>
-        <li>Reinhold Dånmark</li>
-        <li>Simon Wikman</li>
-        <li>Stefan Bernhardsson</li>
-        <li>Sören Källström</li>
+        <li title="Arne Georgzen"><div>Arne</div></li>
+        <li title="Bengt Östlund"><div>Bengt</div></li>
+        <li title="Curt Dagh"><div>Curt</div></li>
+        <li title="Benny Stener"><div>Benny</div></li>
+        <li title="Birger Kareliusson"><div>Birger</div></li>
+        <li title="Emil Eklund"><div>Emil</div></li>
+        <li title="Christer Svalin"><div>Christer</div></li>
+        <li title="Dan Enarsson"><div>Dan</div></li>
+        <li title="Göran Bernhardsson"><div>Göran</div></li>
+        <li title="Jan Lundevall"><div>Jan</div></li>
+        <li title="Jesper Gustavsson"><div>Jesper</div></li>
+        <li title="Jonas Borgman"><div>Jonas</div></li>
+        <li title="Leif Persson"><div>Leif</div></li>
+        <li title="Kjell Evert Martinsson"><div>Kjell</div></li>
+        <li title="Mikael Wikman"><div>Mikael</div></li>
+        <li title="Per Sandberg"><div>Per</div></li>
+        <li title="Peter Törnqvist"><div>Peter</div></li>
+        <li title="Reinhold Dånmark"><div>Reinhold</div></li>
+        <li title="Simon Wikman"><div>Simon</div></li>
+        <li title="Stefan Bernhardsson"><div>Stefan</div></li>
+        <li title="Sören Källström"><div>Sören</div></li>
         <form style="display: flex">
           <input id="freeform-add" type="text" />
           <input type="submit" value="Lägg till" />
@@ -48,7 +48,7 @@
   html,
   body {
     font-family: Monospace;
-    font-size: 12px;
+    font-size: 16px;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -73,13 +73,24 @@
     letter-spacing: 1.5px;
   }
 
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
   li {
     display: block;
+    padding: 4px;
+    margin-left: 16px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  li div {
+    background-color: white;
     border: 1px solid;
     border-radius: 5px;
-    padding: 6px;
-    margin: 16px;
-    background-color: white;
+    padding: 16px;
   }
 
   #pick-players {
@@ -122,9 +133,8 @@
   }
 
   .match {
-    flex: 0 0 300px;
+    flex: 0 0 330px;
     overflow: hidden;
-    padding: 16px;
     box-sizing: border-box;
     margin: 16px;
   }
@@ -139,7 +149,7 @@
     background-color: green;
     color: white;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 20px;
     display: flex;
   }
 
