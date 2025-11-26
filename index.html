@@ -65,7 +65,7 @@
     box-sizing: border-box;
     width: 100%;
     max-width: 400px;
-    padding: 8px;
+    padding: 16px 8px;
     background-color: green;
     color: white;
     font-weight: bold;
@@ -199,6 +199,9 @@
     100% {
       left: -100%;
     }
+  }
+  button {
+    position: relative;
   }
 </style>
 
@@ -398,28 +401,6 @@
 
       back.addEventListener("click", goBack)
       next.addEventListener("click", goNext)
-
-      // swipe actions
-      let startX = 0
-      let startY = 0
-
-      roundsEl.addEventListener("pointerdown", (e) => {
-        startX = e.clientX
-        startY = e.clientY
-      })
-
-      roundsEl.addEventListener("pointerup", (e) => {
-        const dx = e.clientX - startX
-        const dy = e.clientY - startY
-
-        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-          if (dx > 0) {
-            goBack()
-          } else {
-            goNext()
-          }
-        }
-      })
     }
   })
 
