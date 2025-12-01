@@ -2,47 +2,18 @@
 <title>Badminton Schema</title>
 <link rel="manifest" href="manifest.json" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<div id="pick-players">
-  <h1>Spelare:</h1>
-  <div style="display: flex; flex-wrap: wrap">
-    <div>
-      <h2>Tillgängliga</h2>
-      <ul id="available-players">
-        <li title="Arne Georgzen"><div>Arne</div></li>
-        <li title="Bengt Östlund"><div>Bengt</div></li>
-        <li title="Curt Dagh"><div>Curt</div></li>
-        <li title="Benny Stener"><div>Benny</div></li>
-        <li title="Birger Kareliusson"><div>Birger</div></li>
-        <li title="Emil Eklund"><div>Emil</div></li>
-        <li title="Christer Svalin"><div>Christer</div></li>
-        <li title="Dan Enarsson"><div>Dan</div></li>
-        <li title="Göran Bernhardsson"><div>Göran</div></li>
-        <li title="Jan Lundevall"><div>Jan</div></li>
-        <li title="Jesper Gustavsson"><div>Jesper</div></li>
-        <li title="Jonas Borgman"><div>Jonas</div></li>
-        <li title="Leif Persson"><div>Leif</div></li>
-        <li title="Kjell Evert Martinsson"><div>Kjell</div></li>
-        <li title="Mikael Wikman"><div>Mikael</div></li>
-        <li title="Per Sandberg"><div>Per</div></li>
-        <li title="Peter Törnqvist"><div>Peter</div></li>
-        <li title="Reinhold Dånmark"><div>Reinhold</div></li>
-        <li title="Simon Wikman"><div>Simon</div></li>
-        <li title="Stefan Bernhardsson"><div>Stefan</div></li>
-        <li title="Sören Källström"><div>Sören</div></li>
-        <form style="display: flex">
-          <input id="freeform-add" type="text" />
-          <input type="submit" value="Lägg till" />
-        </form>
-      </ul>
-    </div>
-    <div>
-      <h2>Valda spelare</h2>
-      <ul id="picked-players"></ul>
-    </div>
-  </div>
-
-  <button id="start">Start!</button>
-</div>
+<script type="importmap">
+  {
+    "imports": {
+      "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3.3.1/lit-html.min.js"
+    }
+  }
+</script>
+<script type="module">
+  import "./players.js"
+</script>
+<x-players></x-players>
+<button id="start">Start!</button>
 
 <style>
   html,
@@ -73,35 +44,9 @@
     letter-spacing: 1.5px;
   }
 
-  ul {
-    margin: 0;
-    padding: 0;
-  }
-
-  li {
-    display: block;
-    padding: 4px;
-    margin-left: 16px;
-    width: 100%;
-    max-width: 360px;
-  }
-
-  li div {
-    background-color: white;
-    border: 1px solid;
-    border-radius: 5px;
-    padding: 16px;
-  }
-
-  #pick-players {
-    padding: 16px;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-
-  #available-players li {
-    cursor: pointer;
+  #schedule {
+    box-shadow: 2px 2px 20px #ccc;
+    background-color: #ccc;
   }
 
   #schedule nav {
@@ -127,9 +72,13 @@
     height: 100%;
     flex-wrap: wrap;
     width: 100%;
-    top: 40px;
-    height: calc(100% - 40px);
+    top: 60px;
+    height: calc(100% - 60px);
     overflow-y: scroll;
+  }
+
+  #current-round {
+    line-height: 55px;
   }
 
   .match {
@@ -207,43 +156,15 @@
 
 <script type="module">
   import schedule from "./schedule.js"
-
-  const pickPlayersView = document.querySelector("#pick-players")
-  const pickedPlayers = document.querySelector("#picked-players")
-  const availablePlayers = document.querySelector("#available-players")
-  const freeformAdd = document.querySelector("#freeform-add")
-
-  document.querySelector("form").addEventListener("submit", (e) => {
-    const li = document.createElement("li")
-    li.textContent = freeformAdd.value
-    pickedPlayers.appendChild(li)
-    freeformAdd.value = ``
-
-    e.preventDefault()
-
-    return false
-  })
-
-  for (let el of [...document.querySelectorAll("#available-players > li")]) {
-    function add() {
-      function remove() {
-        availablePlayers.prepend(this)
-        this.removeEventListener("click", remove)
-        this.addEventListener("click", add)
-      }
-
-      pickedPlayers.appendChild(this)
-      this.removeEventListener("click", add)
-      this.addEventListener("click", remove)
-    }
-    el.addEventListener("click", add)
-  }
+  import { players as playersSignal } from "./signals.js"
 
   document.querySelector("#start").addEventListener("click", (e) => {
-    let players = [...pickedPlayers.children].reduce((acc, player) => {
-      acc.push(player.textContent)
-      return acc
-    }, [])
+    const pickPlayersView = document.querySelector(`x-players`)
+    const startButton = document.querySelector(`#start`)
+
+    let players = playersSignal.value
+      .filter((it) => it.chosen)
+      .map((it) => it.display)
 
     if (players % 2 == 1) {
       // ensure we have even teams (in essence, means someone will be playing singles sometimes)
@@ -263,6 +184,7 @@
 
     function showRound(fromLeft) {
       pickPlayersView.style.display = "none"
+      startButton.style.display = "none"
 
       const prevNav = el.querySelector(`nav`)
       if (prevNav) {
@@ -384,6 +306,7 @@
         if (currentRound === 0) {
           el.remove()
           pickPlayersView.style.display = ""
+          startButton.style.display = ""
         } else {
           currentRound -= 1
           roundsEl.classList.add(`slide-out-right`)
