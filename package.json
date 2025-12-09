@@ -1,0 +1,22 @@
+{
+  "name": "badminton-schema",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "./bin/www"
+  },
+  "dependencies": {
+    "@sequelize/sqlite3": "^7.0.0-alpha.47",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "^5.0.0",
+    "http-errors": "~1.6.3",
+    "morgan": "^1.10.1",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@sequelize/cli": "^7.0.0-alpha.47"
+  }
+}
