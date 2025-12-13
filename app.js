@@ -4,17 +4,17 @@ import path from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
 
-import { Sequelize } from "@sequelize/core"
-import { SqliteDialect } from "@sequelize/sqlite3"
-
 import { fileURLToPath } from "url"
 
-import usersRouter from "./routes/users.js"
+import users from "./routes/users.js"
+import sequelize, { User } from "./db.js"
 
-const sequelize = new Sequelize({
-  dialect: SqliteDialect,
-  storage: `db.sqlite`,
-})
+function makePassword(full) {
+  return (
+    full.substr(0, 3).toLowerCase() +
+    full.substr(full.length - 3, 3).toLowerCase()
+  )
+}
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -27,11 +27,42 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, `public`)))
 
-app.use(`/users`, usersRouter)
+// auth
+app.use((req, res, next) => {
+  try {
+    const header = req.headers.authorization
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404))
+    if (!header) {
+      return res.status(401).json({ error: "Missing authorization header" })
+    }
+
+    const [scheme, token] = header.split(" ")
+
+    if (scheme !== "Bearer" || !token) {
+      return res.status(401).json({ error: "Invalid authorization format" })
+    }
+
+    // Verify token
+    const user = User.findOne({
+      where: { password: token },
+      attributes: {
+        exclude: ["password"],
+      },
+    })
+
+    if (!user) {
+      throw new Error(`No user with that password`)
+    }
+
+    // Attach payload to request for later use
+    req.user = user
+
+    next()
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid or expired token" })
+  }
 })
+
+app.use(`/users`, users)
 
 export default app

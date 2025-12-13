@@ -1,0 +1,307 @@
+
+
+  button {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 400px;
+    padding: 16px 8px;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  #schedule {
+    box-shadow: 2px 2px 20px #ccc;
+    background-color: #ccc;
+  }
+
+  #schedule nav {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #schedule nav div {
+    flex: 1 1 auto;
+    font-size: 32px;
+    text-align: center;
+  }
+
+  #schedule button {
+    width: 90px;
+  }
+
+  #rounds {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    flex-wrap: wrap;
+    width: 100%;
+    top: 60px;
+    height: calc(100% - 60px);
+    overflow-y: scroll;
+  }
+
+  #current-round {
+    line-height: 55px;
+  }
+
+  .match {
+    flex: 0 0 330px;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 16px;
+  }
+
+  .match h2 {
+    margin-top: 0;
+  }
+
+  .team {
+    height: 100px;
+    border: 8px solid gray;
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    display: flex;
+  }
+
+  .team div:nth-child(2) {
+    border-left: 3px dotted gray;
+  }
+
+  .team div {
+    padding: 16px;
+    width: 150px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #resting {
+    font-size: 16px;
+  }
+
+  .slide-in-right {
+    animation: ease-in-out 500ms forwards slide-in-right;
+  }
+
+  .slide-in-left {
+    animation: ease-in-out 500ms reverse slide-out-left;
+  }
+
+  .slide-out-left {
+    animation: ease-in-out 500ms forwards slide-out-left;
+  }
+
+  .slide-out-right {
+    animation: ease-in-out 500ms reverse slide-in-right;
+  }
+
+  @keyframes slide-in-right {
+    0% {
+      left: 100%;
+    }
+    100% {
+      left: 0;
+    }
+  }
+  @keyframes slide-out-left {
+    0% {
+      left: 0%;
+    }
+    100% {
+      left: -100%;
+    }
+  }
+  button {
+    position: relative;
+  }
+</style>
+
+<script type="module" src="index.js"></script>
+
+<script type="dontrun">
+  import schedule from "./schedule.js"
+  import { players as playersSignal } from "./signals.js"
+
+  document.querySelector("#start").addEventListener("click", (e) => {
+    const pickPlayersView = document. aquerySelector(`x-players`)
+    const startButton = document.querySelector(`#start`)
+
+    let players = playersSignal.value
+      .filter((it) => it.chosen)
+      .map((it) => it.display)
+
+    if (players % 2 == 1) {
+      // ensure we have even teams (in essence, means someone will be playing singles sometimes)
+      players.push(``)
+    }
+
+    shuffle(players)
+
+    const rounds = schedule(players)
+    let currentRound = 0
+
+    let el = document.createElement(`div`)
+    el.id = "schedule"
+    document.body.appendChild(el)
+
+    showRound()
+
+    function showRound(fromLeft) {
+      pickPlayersView.style.display = "none"
+      startButton.style.display = "none"
+
+      const prevNav = el.querySelector(`nav`)
+      if (prevNav) {
+        prevNav.remove()
+      }
+
+      const nav = document.createElement("nav")
+      const back = Object.assign(document.createElement("button"), {
+        id: "back",
+        innerHTML: "Tillbaka",
+      })
+      const roundTitle = Object.assign(document.createElement("div"), {
+        id: "current-round",
+        textContent: `Runda: ${currentRound + 1}`,
+      })
+      const next = Object.assign(document.createElement("button"), {
+        id: "next",
+        innerHTML: "Nästa",
+      })
+
+      nav.appendChild(back)
+      nav.appendChild(roundTitle)
+      nav.appendChild(next)
+
+      el.appendChild(nav)
+
+      const roundsEl = Object.assign(document.createElement("div"), {
+        id: "rounds",
+      })
+
+      const match = rounds[currentRound % rounds.length]
+
+      for (const m of match.matches) {
+        const matchEl = document.createElement("div")
+        matchEl.className = "match"
+        const title = document.createElement("h2")
+        title.textContent = "Bana " + m.court
+        matchEl.appendChild(title)
+
+        const team1 = Object.assign(document.createElement("div"), {
+          className: "team",
+        })
+        const team2 = Object.assign(document.createElement("div"), {
+          className: "team",
+        })
+
+        if (m.type === `doubles`) {
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team1[0],
+            })
+          )
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team1[1],
+            })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team2[0],
+            })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team2[1],
+            })
+          )
+        } else if (m.type === `two_vs_one`) {
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team[0],
+            })
+          )
+          team1.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.team[1],
+            })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), {
+              textContent: m.single,
+            })
+          )
+        } else if (m.type === `singles`) {
+          team1.appendChild(
+            Object.assign(document.createElement("div"), { textContent: m.p1 })
+          )
+          team2.appendChild(
+            Object.assign(document.createElement("div"), { textContent: m.p2 })
+          )
+        }
+
+        matchEl.appendChild(team1)
+        matchEl.appendChild(team2)
+
+        roundsEl.appendChild(matchEl)
+      }
+
+      if (match.rest.length > 0) {
+        const resting = document.createElement(`div`)
+        resting.id = `resting`
+        resting.textContent = `😴 ${match.rest.join(`, `)} vilar 😴`
+        roundsEl.appendChild(resting)
+      }
+
+      if (fromLeft) {
+        roundsEl.classList.add(`slide-in-left`)
+      } else {
+        roundsEl.classList.add(`slide-in-right`)
+      }
+      setTimeout(() => {
+        roundsEl.classList.remove(`slide-in-left`)
+        roundsEl.classList.remove(`slide-in-right`)
+      }, 500)
+
+      el.appendChild(roundsEl)
+
+      function goBack() {
+        if (currentRound === 0) {
+          el.remove()
+          pickPlayersView.style.display = ""
+          startButton.style.display = ""
+        } else {
+          currentRound -= 1
+          roundsEl.classList.add(`slide-out-right`)
+          setTimeout(() => roundsEl.remove(), 500)
+          showRound(true)
+        }
+      }
+
+      function goNext() {
+        currentRound = currentRound + 1
+        roundsEl.classList.add(`slide-out-left`)
+        setTimeout(() => roundsEl.remove(), 500)
+        showRound()
+      }
+
+      back.addEventListener("click", goBack)
+      next.addEventListener("click", goNext)
+    }
+  })
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[array[i], array[j]] = [array[j], array[i]] // swap
+    }
+    return array
+  }
+</script>

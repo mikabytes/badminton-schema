@@ -1,9 +1,17 @@
-import express from "express"
-const router = express.Router()
+import { Router } from "express"
+import { User } from "../db.js"
 
-/* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("respond with a resource")
+const app = Router()
+export default app
+
+app.get(`/`, async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ["password"] },
+    })
+    res.json(users)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send(e.message)
+  }
 })
-
-export default router

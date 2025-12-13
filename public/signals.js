@@ -1,25 +1,5 @@
-import { signal } from "./tiny-reactive.js"
+import { signal } from "./reactive.js"
 
-export const players = signal([
-  { id: `Arne Georgzen`, display: `Arne`, chosen: false },
-  { id: `Bengt Östlund`, display: `Bengt`, chosen: false },
-  { id: `Curt Dagh`, display: `Curt`, chosen: false },
-  { id: "Benny Stener", display: `Benny`, chosen: false },
-  { id: "Birger Kareliusson", display: `Birger`, chosen: false },
-  { id: "Emil Eklund", display: `Emil`, chosen: false },
-  { id: "Christer Svalin", display: `Christer`, chosen: false },
-  { id: "Dan Enarsson", display: `Dan`, chosen: false },
-  { id: "Göran Bernhardsson", display: `Göran`, chosen: false },
-  { id: "Jan Lundevall", display: `Jan`, chosen: false },
-  { id: "Jesper Gustavsson", display: `Jesper`, chosen: false },
-  { id: "Jonas Borgman", display: `Jonas`, chosen: false },
-  { id: "Leif Persson", display: `Leif`, chosen: false },
-  { id: "Kjell Evert Martinsson", display: `Kjell`, chosen: false },
-  { id: "Mikael Wikman", display: `Mikael`, chosen: false },
-  { id: "Per Sandberg", display: `Per`, chosen: false },
-  { id: "Peter Törnqvist", display: `Peter`, chosen: false },
-  { id: "Reinhold Dånmark", display: `Reinhold`, chosen: false },
-  { id: "Simon Wikman", display: `Simon`, chosen: false },
-  { id: "Stefan Bernhardsson", display: `Stefan`, chosen: false },
-  { id: "Sören Källström", display: `Sören`, chosen: false },
-])
+export const users = signal([])
+
+export const page = signal(null)
