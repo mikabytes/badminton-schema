@@ -1,4 +1,3 @@
-import createError from "http-errors"
 import express from "express"
 import path from "path"
 import cookieParser from "cookie-parser"
@@ -7,6 +6,8 @@ import logger from "morgan"
 import { fileURLToPath } from "url"
 
 import users from "./routes/users.js"
+import schema from "./routes/schema.js"
+
 import sequelize, { User } from "./db.js"
 
 function makePassword(full) {
@@ -28,7 +29,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, `public`)))
 
 // auth
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   try {
     const header = req.headers.authorization
 
@@ -43,7 +44,7 @@ app.use((req, res, next) => {
     }
 
     // Verify token
-    const user = User.findOne({
+    const user = await User.findOne({
       where: { password: token },
       attributes: {
         exclude: ["password"],
@@ -59,10 +60,16 @@ app.use((req, res, next) => {
 
     next()
   } catch (err) {
+    console.error(err)
     return res.status(401).json({ error: "Invalid or expired token" })
   }
 })
 
+app.get(`/current-user`, async (req, res) => {
+  res.json(req.user)
+})
+
 app.use(`/users`, users)
+app.use(`/schema`, schema)
 
 export default app

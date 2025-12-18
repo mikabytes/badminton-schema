@@ -1,4 +1,4 @@
-import { signal, effect } from "./tiny-reactive.js"
+import { signal, effect } from "../reactive.js"
 import { render } from "lit-html"
 
 export default class ReactiveElement extends HTMLElement {

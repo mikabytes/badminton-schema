@@ -3,6 +3,7 @@
   <title>Badminton</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="/home.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="index.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script type="importmap">
     {
@@ -11,7 +12,35 @@
       }
     }
   </script>
+  <style>
+    body {
+      display: none; /* will be overridden once css is loaded */
+    }
+  </style>
   <body>
     <script type="module" src="index.js"></script>
+    <nav>
+      <h1></h1>
+      <button>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 260">
+          <path
+            d="M20 1033h250M20 933h250M20 833h250"
+            style="
+              fill: none;
+              stroke: currentColor;
+              stroke-width: 50;
+              stroke-linecap: round;
+              stroke-linejoin: miter;
+              stroke-miterlimit: 4;
+              stroke-opacity: 1;
+              stroke-dasharray: none;
+            "
+            transform="translate(10 -803)"
+          />
+        </svg>
+      </button>
+    </nav>
+    <div id="content"></div>
+    <div id="footer"></div>
   </body>
 </html>
