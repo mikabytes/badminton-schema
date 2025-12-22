@@ -15,6 +15,7 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "@sequelize/cli": "^7.0.0-alpha.47"
+    "@sequelize/cli": "^7.0.0-alpha.47",
+    "hotserve": "^2.0.0-alpha.1"
   }
 }

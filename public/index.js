@@ -1,6 +1,6 @@
-import { page, users } from "./signals.js"
+import { page, users, hmr } from "./signals.js"
 import { effect } from "./reactive.js"
-import { render } from "lit-html"
+import { render, html } from "html"
 import "./elements/page-login.js"
 import "./elements/page-rsvp.js"
 
@@ -57,10 +57,44 @@ function setActions(html) {
     footer.style.display = `none`
   }
 }
+
 // main page picker
 effect(() => {
-  const newPage = document.createElement(`x-page-${page.value}`)
-  newPage.setTitle = setTitle
-  newPage.setActions = setActions
-  content.replaceChildren(newPage)
+  // make sure we're registered for hmr
+  hmr.value
+
+  render(
+    html(
+      [
+        `<x-page-${page.value} .setTitle=`,
+        ` .setActions=`,
+        `></x-page-${page.value}>`,
+      ],
+      setTitle,
+      setActions
+    ),
+    content
+  )
 })
+
+// Hot Module Reloading (listening to file changes)
+const source = new EventSource(`/changes`)
+source.onmessage = (message) => {
+  const { path, exists } = JSON.parse(message.data)
+
+  if (!exists) {
+    console.log(`${path} was deleted!`)
+
+    document.location.reload()
+  } else {
+    console.log(`${path} was modified.`)
+
+    if (path.startsWith(`public/elements`)) {
+      // this will re-load it, and when doing customElements.define will
+      // automatically trigger the hmr signal and re-render everything
+      import(`${path.replace(/^public/, ``)}?d=${Date.now()}`)
+    }
+  }
+
+  // Use that specific file for hot reloading, or do a full page refresh
+}

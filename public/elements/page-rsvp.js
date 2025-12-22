@@ -26,18 +26,57 @@ class PageRsvp extends Element {
         throw new Error(`Connectivity issue.`)
       }
 
-      schema.value = await res.json()
+      schema.value = (await res.json()).map((it) => {
+        return {
+          ...it,
+          date: new Date(it.date),
+        }
+      })
     } catch (e) {
       alert(e)
     }
   }
 
   render() {
-    this.setTitle(`Are you coming?`)
+    this.setTitle(`Kommer du?`)
     this.setActions()
 
-    return html`
-      <style>
+    const collated = []
+
+    let week
+    let weekEvents = []
+
+    for (const event of schema.value) {
+      console.log(event)
+      let eventWeek = getISOWeek(event.date)
+      if (!week) {
+        week = eventWeek
+      }
+
+      if (week === eventWeek) {
+        weekEvents.push(event)
+      } else {
+        collated.push({
+          week,
+          events: weekEvents,
+        })
+        weekEvents = []
+        week = eventWeek
+      }
+    }
+
+    collated.push({
+      week,
+      events: weekEvents,
+    })
+
+    const formatter = new Intl.DateTimeFormat("sv-SE", {
+      weekday: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+
+    return html` <style>
         :host {
           display: flex;
           flex-direction: column;
@@ -45,9 +84,42 @@ class PageRsvp extends Element {
           justify-content: center;
         }
       </style>
-      ${JSON.stringify(schema.value)}
-    `
+      ${collated.map(
+        (group) => html`
+          <section>
+            <h2>Vecka ${group.week}</h2>
+            ${group.events.map(
+              (event) => html`
+                <div class="event">
+                  <div
+                    class="date"
+                    title="${event.date.toISOString().slice(0, 10)}"
+                  >
+                    ${formatter.format(event.date)}
+                  </div>
+                </div>
+              `
+            )}
+          </section>
+        `
+      )}`
   }
 }
 
 customElements.define("x-page-rsvp", PageRsvp)
+
+function getISOWeek(date) {
+  // Copy date so we don't mutate original
+  const d = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  )
+
+  // ISO week date algorithm:
+  // Thursday determines the year
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
+
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  const week = Math.ceil(((d - yearStart) / 86400000 + 1) / 7)
+
+  return week
+}

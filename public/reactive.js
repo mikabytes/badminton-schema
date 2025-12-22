@@ -1,5 +1,23 @@
 let activeEffect = null
 
+const queue = new Set()
+let scheduled = false
+
+function schedule(effect) {
+  queue.add(effect)
+  if (!scheduled) {
+    scheduled = true
+    queueMicrotask(() => {
+      scheduled = false
+      // run a stable snapshot; effects might schedule more effects
+      for (const fn of [...queue]) {
+        queue.delete(fn)
+        if (!fn.isCancelled) fn()
+      }
+    })
+  }
+}
+
 export function signal(initial) {
   const subscribers = new Set()
   let value = initial
@@ -16,7 +34,7 @@ export function signal(initial) {
       if (fn.isCancelled) {
         subscribers.delete(fn)
       } else {
-        fn()
+        schedule(fn)
       }
     })
   }

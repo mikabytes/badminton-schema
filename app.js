@@ -1,4 +1,5 @@
 import express from "express"
+import hotserve from "hotserve"
 import path from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
@@ -27,6 +28,12 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, `public`)))
+
+hotserve({
+  dir: path.join(__dirname, `public`),
+  pattern: `*.js`,
+  app,
+})
 
 // auth
 app.use(async (req, res, next) => {
