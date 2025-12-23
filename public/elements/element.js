@@ -22,6 +22,7 @@ export default class ReactiveElement extends HTMLElement {
       try {
         render(this.render(), this.shadowRoot)
       } catch (e) {
+        console.error(e)
         render(
           html`<div
             style="border: 2px dashed red; padding: 16px; white-space: pre-wrap; color: red;"

@@ -71,7 +71,7 @@ class PageRsvp extends Element {
     })
 
     const formatter = new Intl.DateTimeFormat("sv-SE", {
-      weekday: "long",
+      weekday: "short",
       hour: "2-digit",
       minute: "2-digit",
     })
@@ -83,6 +83,101 @@ class PageRsvp extends Element {
           align-items: center;
           justify-content: center;
         }
+
+        .event {
+          padding: 0px;
+          border: 1px solid var(--border);
+          background-color: var(--background-panel);
+          display: flex;
+        }
+
+        .date {
+          padding: 20px;
+          width: 98px;
+          text-align: right;
+          padding-right: 40px;
+          color: var(--text-primary);
+        }
+
+        button {
+          padding: 0;
+          margin: 0;
+          border: none;
+          background-color: transparent;
+          cursor: pointer;
+        }
+
+        .no,
+        .yes {
+          font-size: 24px;
+          padding: 12px;
+        }
+
+        .yes:not(.selected) {
+          filter: grayscale(100%);
+        }
+
+        .no:not(.selected) {
+          filter: grayscale(100%);
+        }
+
+        .yes {
+          position: relative;
+          color: green;
+        }
+
+        .no {
+          position: relative;
+          color: var(--error);
+        }
+
+        .yes.selected::after {
+          position: absolute;
+          content: " ";
+          height: 3px;
+          border-radius: 3px;
+          background-color: green;
+          bottom: 10px;
+          left: 5px;
+          right: 10px;
+        }
+
+        .no.selected::after {
+          position: absolute;
+          content: " ";
+          height: 3px;
+          border-radius: 3px;
+          background-color: var(--error);
+          bottom: 10px;
+          left: 6px;
+          right: 8px;
+        }
+
+        .event.cancelled {
+          filter: grayscale(100%) opacity(0.1);
+          position: relative;
+        }
+        .event.cancelled::after {
+          content: " ";
+          position: absolute;
+          top: 30px;
+          height: 2px;
+          left: -20px;
+          right: -20px;
+          background-color: red;
+        }
+
+        .attending {
+          position: relative;
+          display: flex;
+          color: var(--text-tertiary);
+          padding: 20px;
+        }
+
+        .icon {
+          font-size: 16px;
+          filter: grayscale(100%);
+        }
       </style>
       ${collated.map(
         (group) => html`
@@ -91,11 +186,20 @@ class PageRsvp extends Element {
             ${group.events.map(
               (event) => html`
                 <div class="event">
+                  <div class="attending">
+                    <div class="icon">👤</div>
+                    10
+                  </div>
                   <div
                     class="date"
                     title="${event.date.toISOString().slice(0, 10)}"
                   >
                     ${formatter.format(event.date)}
+                  </div>
+                  <div class="quick-actions">
+                    <button class="yes selected" title="Yes, I'm going">
+                      ✓</button
+                    ><button class="no" title="No, I'm not going">✗</button>
                   </div>
                 </div>
               `
