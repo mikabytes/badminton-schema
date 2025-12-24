@@ -47,7 +47,6 @@ class PageRsvp extends Element {
     let weekEvents = []
 
     for (const event of schema.value) {
-      console.log(event)
       let eventWeek = getISOWeek(event.date)
       if (!week) {
         week = eventWeek

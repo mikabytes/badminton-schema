@@ -1,8 +1,9 @@
-import { page, users, hmr } from "./signals.js"
+import { page, users, hmr, showMenu } from "./signals.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
 import "./elements/page-login.js"
 import "./elements/page-rsvp.js"
+import "./elements/menu.js"
 
 // clean up the DOM, already loaded scripts are just DOM junk
 for (const s of [...document.querySelectorAll(`script`)]) {
@@ -44,19 +45,18 @@ await testIsLoggedIn()
 const content = document.querySelector(`#content`)
 const title = document.querySelector(`h1`)
 const footer = document.querySelector(`#footer`)
+const hamburger = document.querySelector(`#hamburger`)
+const menu = document.querySelector(`#menu`)
 
-function setTitle(text) {
-  title.textContent = text
-}
+// toggle menu
+hamburger.addEventListener(`click`, (e) => {
+  showMenu.value = !showMenu.value
+  hamburger.setAttribute(`aria-expanded`, String(showMenu.value))
+})
 
-function setActions(html) {
-  if (html) {
-    render(html, footer)
-    footer.style.display = ``
-  } else {
-    footer.style.display = `none`
-  }
-}
+effect(() => {
+  menu.style.display = showMenu.value ? `block` : `none`
+})
 
 // main page picker
 effect(() => {

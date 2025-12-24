@@ -49,38 +49,6 @@ body {
   background-color: var(--background);
 }
 
-nav {
-  height: 50px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 3px 3px rgba(0,0,0, 0.2);
-  background-color: var(--secondary-focus);
-  color: var(--background);
-}
-
-nav > button {
-  border: 0px;
-  background-color: transparent;
-  margin: 0;
-  padding: 8px;
-  height: 59px;
-  width: 59px;
-  margin-left: auto;
-  cursor: pointer;
-}
-
-nav > button > svg {
-  height: 100%;
-  width: 100%;
-  color: var(--background);
-}
-
-nav h1 {
-  display: block;
-  margin: 0 0 0 16px;
-  padding: 0;
-}
-
 #content {
   display: flex;
   flex: 1 1 auto;
