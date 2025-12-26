@@ -2,8 +2,6 @@ import { signal, effect } from "../reactive.js"
 import { render, html } from "lit-html"
 import { hmr } from "../signals.js"
 
-window.html = html
-
 export default class ReactiveElement extends HTMLElement {
   #cancelEffect = undefined
   #freeze = false
@@ -53,6 +51,11 @@ export default class ReactiveElement extends HTMLElement {
 // we patch customElements.define so that we can do HMR
 let define = customElements.define
 export const versions = new Map()
+
+export function getTagName(tagName) {
+  const version = versions.get(`x-${tagName}`) || 1
+  return `${tagName}-${version}`
+}
 
 customElements.define = (tagName, klass) => {
   if (!versions.has(tagName)) {

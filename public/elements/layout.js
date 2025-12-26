@@ -1,83 +1,125 @@
-import Element from "./element.js"
-import { html } from "lit-html"
-import { signal } from "../reactive.js"
+import "./page-login.js"
+import "./page-rsvp.js"
+import "./menu.js"
 
-class Layout extends Element {
-  #title = signal(``)
-  #actions = signal(html``)
+import {versions} from "./element.js"
+import { html, render } from "html"
+import { showMenu, page, title, actions } from "../signals.js"
+import { effect } from "../reactive.js"
 
-  setTitle = (text) => {
-    this.title.value = text
-  }
-
-  setActions = (html) => {
-    this.actions.value = html
-  }
-
-  render() {
-    return html`
-      <style>
-        nav {
-          height: 50px;
-          display: flex;
-          align-items: center;
-          box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
-          background-color: var(--secondary-focus);
-          color: var(--background);
-        }
-
-        nav > button {
-          border: 0px;
-          background-color: transparent;
-          margin: 0;
-          padding: 8px;
-          height: 59px;
-          width: 59px;
-          margin-left: auto;
-          cursor: pointer;
-        }
-
-        nav > button > svg {
-          height: 100%;
-          width: 100%;
-          color: var(--background);
-        }
-
-        nav h1 {
-          display: block;
-          margin: 0 0 0 16px;
-          padding: 0;
-        }
-      </style>
-      <nav>
-        <h1>${this.title.value}</h1>
-        <button
-          id="hamburger"
-          aria-label="Open menu"
-          aria-expanded="false"
-          aria-controls="main-menu"
-        >
-          <svg
-            class="hamburger__icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path
-              d="M4 6h16M4 12h16M4 18h16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-        </button>
-      </nav>
-      <div id="content"></div>
-      <div id="footer">${this.actions.value}</div>
-      <x-menu id="menu"></x-menu>
-    `
-  }
+const titles = {
+  rsvp: `Kommer du?`,
 }
 
-customElements.define("x-layout", Layout)
+effect(() =>  {
+
+  const out = html`
+    <style>
+
+      #content {
+        display: flex;
+        flex: 1 1 auto;
+        overflow-y: scroll;
+        overflow-x: hidden;
+      }
+
+      #content > * {
+        flex: 1 1 auto;
+      }
+
+      #footer {
+        flex: 0 0 55px;
+        box-sizing: border-box;
+        box-shadow: 0 -3px 3px var(--background-subtle);
+        border-top: 1px var(--border-strong) solid; 
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        background-color: var(--background-subtle);
+}
+
+
+      nav {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+        background-color: var(--secondary-focus);
+        color: var(--background);
+      }
+
+      #hamburger {
+        border: 0px;
+        background-color: transparent;
+        margin: 0;
+        padding: 8px;
+        height: 40px;
+        width: 40px;
+        margin-left: auto;
+        cursor: pointer;
+        position: relative;
+      }
+
+      #hamburger > div {
+        position: absolute;
+        border-radius: 5px;
+        background-color: var(--background);
+        left: 8px;
+        right: 8px;
+        height: 3px;
+      }
+
+      #hamburger > div:nth-child(1) {
+        top: 12px;
+      }
+      #hamburger > div:nth-child(2) {
+        top: 20px;
+      }
+      #hamburger > div:nth-child(3) {
+        top: 28px;
+      }
+
+      nav h1 {
+        display: block;
+        margin: 0 0 0 16px;
+        padding: 0;
+        font-size: 24px;
+      }
+
+
+      button, input[type=submit] {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 400px;
+        padding: 16px 8px;
+        background-color: green;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+      }
+    </style>
+    <nav>
+      <h1>${titles[page.value] || ``}</h1>
+      <button
+        id="hamburger"
+        aria-label="Open menu"
+        aria-expanded="${String(showMenu.value)}"
+        aria-controls="main-menu"
+        @click=${() => showMenu.value = !showMenu.value}
+      >
+        <div></div>
+        <div></div>
+        <div></div>
+      </button>
+    </nav>
+    <div id="content">
+      <x-page-${page.value} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
+    </div>
+    <div id="footer" style="display: ${actions.value ? `block` : `none`}">${actions.value}</div>
+    <x-menu id="menu" style="display: ${showMenu.value ? `block` : `none`}"></x-menu>
+  `
+
+  render(out, document.body)
+})

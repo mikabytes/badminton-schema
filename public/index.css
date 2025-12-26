@@ -48,38 +48,3 @@ body {
   flex-direction: column;
   background-color: var(--background);
 }
-
-#content {
-  display: flex;
-  flex: 1 1 auto;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-#content > * {
-  flex: 1 1 auto;
-}
-
-#footer {
-  flex: 0 0 55px;
-  box-sizing: border-box;
-  box-shadow: 0 -3px 3px var(--background-subtle);
-  border-top: 1px var(--border-strong) solid; 
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  background-color: var(--background-subtle);
-}
-
-button, input[type=submit] {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 400px;
-  padding: 16px 8px;
-  background-color: green;
-  color: white;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-}

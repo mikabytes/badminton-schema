@@ -1,8 +1,11 @@
 import Element from "./element.js"
 import { html } from "lit-html"
-import { users, userId, schema } from "../signals.js"
+import { users, userId, schema, title, actions } from "../signals.js"
 
 class PageRsvp extends Element {
+
+  title = "Kommer du?"
+
   async connectedCallback() {
     super.connectedCallback()
 
@@ -38,9 +41,6 @@ class PageRsvp extends Element {
   }
 
   render() {
-    this.setTitle(`Kommer du?`)
-    this.setActions()
-
     const collated = []
 
     let week
@@ -64,10 +64,12 @@ class PageRsvp extends Element {
       }
     }
 
-    collated.push({
-      week,
-      events: weekEvents,
-    })
+    if (weekEvents.length > 0) {
+      collated.push({
+        week,
+        events: weekEvents,
+      })
+    }
 
     const formatter = new Intl.DateTimeFormat("sv-SE", {
       weekday: "short",

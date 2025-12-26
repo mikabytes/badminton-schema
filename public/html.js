@@ -1,26 +1,40 @@
 import { html as litHtml, render } from "lit-html"
 import { versions } from "./elements/element.js"
 
+
 export function html(strings, ...values) {
-  let patched = strings.map((s) => {
+  let valuesRemoved = []
+  const stringsOut = [...strings]
+
+  // we also need to handle the special case of x-page-${currentPage}
+  for (let i = 0; i < stringsOut.length; i++) {
+
+    while (stringsOut[i].endsWith(`x-page-`)) {
+
+      const a = stringsOut[i] 
+      const val = String(values.splice(i, 1)[0]) 
+      const b = String(stringsOut.splice(i+1, 1)[0])
+
+      stringsOut[i] = a + val + b
+      valuesRemoved.push(i)
+    }
+
     for (const [tagName, version] of versions.entries()) {
       const re = new RegExp(`<(/?)(${tagName})(?!-\\d+)(?=\\s|/?>)`, "g")
 
-      s = s.replaceAll(re, `<$1$2-${version}`)
+      stringsOut[i] = stringsOut[i].replaceAll(re, `<$1$2-${version}`)
     }
+  }
 
-    return s
-  })
 
-  // Let's pretend to be a TemplateStringResult
-  Object.defineProperty(patched, "raw", {
-    value: Object.freeze(patched.slice()),
+  Object.defineProperty(stringsOut, "raw", {
+    value: Object.freeze(stringsOut.slice()),
     writable: false,
     enumerable: false,
     configurable: false,
   })
 
-  return litHtml(patched, ...values)
+  return litHtml(stringsOut, ...values)
 }
 
 export { render }
