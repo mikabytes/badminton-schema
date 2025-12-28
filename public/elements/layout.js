@@ -4,7 +4,7 @@ import "./menu.js"
 
 import {versions} from "./element.js"
 import { html, render } from "html"
-import { showMenu, page, title, actions } from "../signals.js"
+import { showMenu, page, title, actions, hmr } from "../signals.js"
 import { effect } from "../reactive.js"
 
 const titles = {
@@ -12,6 +12,8 @@ const titles = {
 }
 
 effect(() =>  {
+  // ensure we're subscribed to HMR changes
+  hmr.value
 
   const out = html`
     <style>
@@ -118,7 +120,7 @@ effect(() =>  {
       <x-page-${page.value} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
     </div>
     <div id="footer" style="display: ${actions.value ? `block` : `none`}">${actions.value}</div>
-    <x-menu id="menu" style="display: ${showMenu.value ? `block` : `none`}"></x-menu>
+    <x-menu id="menu" ?hidden=${!showMenu.value}></x-menu>
   `
 
   render(out, document.body)
