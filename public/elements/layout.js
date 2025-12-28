@@ -1,5 +1,6 @@
 import "./page-login.js"
 import "./page-rsvp.js"
+import "./page-members.js"
 import "./menu.js"
 
 import {versions} from "./element.js"
@@ -8,7 +9,8 @@ import { showMenu, page, title, actions, hmr } from "../signals.js"
 import { effect } from "../reactive.js"
 
 const titles = {
-  rsvp: `Kommer du?`,
+  rsvp: `Bokning`,
+  members: `Medlemmar`
 }
 
 effect(() =>  {

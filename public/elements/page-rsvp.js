@@ -4,8 +4,6 @@ import { users, userId, schema, title, actions } from "../signals.js"
 
 class PageRsvp extends Element {
 
-  title = "Kommer du?"
-
   async connectedCallback() {
     super.connectedCallback()
 
