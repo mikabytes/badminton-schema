@@ -15,14 +15,16 @@ class PageMembers extends Element {
         }
 
         ul {
-          margin: 30px 0;
-          padding: 0;
           display: flex;
+          margin: 30px 0px;
+          padding: 0;
           align-items: center;
           flex-direction: column;
         }
 
         li {
+          display: block;
+          box-sizing: border-box;
           list-style: none;
           margin: 16px;
           padding: 16px;
@@ -31,7 +33,7 @@ class PageMembers extends Element {
           width: 100%;
           max-width: 430px;
           position: relative;
-          height: 150px;
+          height: 180px;
         }
 
         .name {

@@ -1,6 +1,7 @@
 import { page, users, hmr, showMenu } from "./signals.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
+import "./routing.js"
 import "./elements/layout.js"
 
 // clean up the DOM, already loaded scripts are just DOM junk
@@ -29,7 +30,6 @@ async function testIsLoggedIn() {
 
       if (res.ok) {
         users.value = await res.json()
-        page.value = `rsvp`
         console.log(`Logged in`)
         return
       }

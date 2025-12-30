@@ -81,7 +81,7 @@ class Menu extends Element {
         <hr />
         <li><button @click=${() => { navigate(`rsvp`) }}>Bokning</li>
         <li><button @click=${() => { navigate(`members`)}}>Medlemmar</li>
-        <li><button @click=${() => { navigate(`schema`)}}>Schema</li>
+        <li><button @click=${() => { navigate(`rules`)}}>Schema</li>
       </nav>
 
     `

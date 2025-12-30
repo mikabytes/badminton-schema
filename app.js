@@ -8,6 +8,7 @@ import { fileURLToPath } from "url"
 
 import users from "./routes/users.js"
 import schema from "./routes/schema.js"
+import rules from "./routes/rules.js"
 
 import sequelize, { User } from "./db.js"
 
@@ -78,5 +79,6 @@ app.get(`/current-user`, async (req, res) => {
 
 app.use(`/users`, users)
 app.use(`/schema`, schema)
+app.use(`/rules`, rules)
 
 export default app

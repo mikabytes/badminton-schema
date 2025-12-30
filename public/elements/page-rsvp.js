@@ -57,7 +57,7 @@ class PageRsvp extends Element {
           week,
           events: weekEvents,
         })
-        weekEvents = []
+        weekEvents = [event]
         week = eventWeek
       }
     }
@@ -80,7 +80,7 @@ class PageRsvp extends Element {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
+          box-sizing: border-box;
         }
 
         .event {
@@ -177,6 +177,15 @@ class PageRsvp extends Element {
           font-size: 16px;
           filter: grayscale(100%);
         }
+
+        section {
+          margin-top: 30px;
+        }
+
+        section:last-child {
+          padding-bottom: 60px;
+        }
+
       </style>
       ${collated.map(
         (group) => html`

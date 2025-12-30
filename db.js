@@ -70,27 +70,7 @@ await Rule.sync({ alter: true })
 await Skip.sync({ alter: true })
 await Response.sync({ alter: true })
 
-await Rule.destroy({ where: sql`1 = 1` })
-
-await Rule.create({
-  weekday: 2, // tuesday
-  hour: 10,
-  minute: 0,
-  tz: `Europe/Stockholm`,
-  validFrom: `2023-01-01`,
-  validTo: `2026-01-01`,
-  slots: 14,
-})
-
-await Rule.create({
-  weekday: 4, // thursday
-  hour: 10,
-  minute: 0,
-  tz: `Europe/Stockholm`,
-  validFrom: `2023-01-01`,
-  validTo: `2026-01-01`,
-  slots: 14,
-})
+//await Rule.destroy({ where: sql`1 = 1` })
 
 export { User, Rule, Skip }
 export default sequelize

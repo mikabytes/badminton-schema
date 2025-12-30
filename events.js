@@ -1,6 +1,6 @@
 /**
  * rules: Array<{ weekday:number, hour:number, minute:number, tz:string, validFrom:string, validTo:string }>
- * skips: Array<{ ts:number }>
+ * skips: Array< Date >
  * from/to: Date (instants)
  *
  * Returns: Array<{ date: Date, skipped: boolean }>
