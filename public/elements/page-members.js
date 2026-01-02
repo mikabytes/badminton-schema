@@ -1,9 +1,13 @@
 
 import Element from "./element.js"
 import { html } from "lit-html"
-import { users} from "../signals.js"
+import users from "features/users.js"
 
 class PageMembers extends Element {
+
+  connectedCallback() {
+    users.load()
+  }
 
   render() {
 

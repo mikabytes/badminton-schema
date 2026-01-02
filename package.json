@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "./bin/www"
+    "start": "./bin/www",
+    "watch": "node --watch ./bin/www"
   },
   "dependencies": {
     "@sequelize/sqlite3": "^7.0.0-alpha.47",

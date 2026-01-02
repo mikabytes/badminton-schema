@@ -72,5 +72,5 @@ await Response.sync({ alter: true })
 
 //await Rule.destroy({ where: sql`1 = 1` })
 
-export { User, Rule, Skip }
+export { User, Rule, Skip, Response }
 export default sequelize

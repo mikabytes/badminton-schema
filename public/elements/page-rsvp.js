@@ -1,44 +1,34 @@
 import Element from "./element.js"
-import { html } from "lit-html"
-import { users, userId, schema, title, actions } from "../signals.js"
+import error from "./error.js"
+import { html } from "html"
+import { userId, actions } from "../signals.js"
+import users from "features/users.js"
+import schema from "features/schema.js"
 
 class PageRsvp extends Element {
 
   async connectedCallback() {
     super.connectedCallback()
 
-    let from = new Date()
-    from.setHours(0)
-    from.setMinutes(0)
-    from.setSeconds(0)
-    from.setMilliseconds(0)
-
-    let to = new Date(from)
-    to.setFullYear(to.getFullYear() + 1)
-
-    try {
-      const res = await fetch(`/schema/${from.getTime()}/${to.getTime()}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.token}`,
-        },
-      })
-
-      if (!res.ok) {
-        throw new Error(`Connectivity issue.`)
-      }
-
-      schema.value = (await res.json()).map((it) => {
-        return {
-          ...it,
-          date: new Date(it.date),
-        }
-      })
-    } catch (e) {
-      alert(e)
-    }
+    schema.load()
+    users.load()
   }
 
   render() {
+    return error(schema, users) || 
+      (schema.loading || users.loading) && html`` || 
+      this.renderSchema()
+  }
+
+  renderSchema() {
+    const err = error(schema, users)
+    if (err) {
+      return err
+    }
+    if (schema.loading || users.loading) {
+      return html``
+    }
+
     const collated = []
 
     let week

@@ -21,14 +21,14 @@ function schedule(effect) {
 export function signal(initial) {
   const subscribers = new Set()
   let value = initial
+  let error = null
+  let loading = false
 
   const read = () => {
     if (activeEffect) subscribers.add(activeEffect)
-    return value
   }
 
-  const write = (next) => {
-    value = next
+  const announce = (next) => {
     // re-run all subscribers
     subscribers.forEach((fn) => {
       if (fn.isCancelled) {
@@ -41,11 +41,37 @@ export function signal(initial) {
 
   return {
     get value() {
-      return read()
+      read()
+      return value
     },
     set value(val) {
-      write(val)
+      value = val
+      announce()
     },
+
+    get error() {
+      read()
+      return error
+    },
+    set error(err) {
+      if (Object.is(err, error)) {
+        return
+      }
+      error = err
+      announce()
+    },
+
+    get loading() {
+      read()
+      return loading
+    },
+    set loading(load) {
+      if (Object.is(load, loading)) {
+        return
+      }
+      loading = load
+      announce()
+    }
   }
 }
 

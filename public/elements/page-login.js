@@ -1,6 +1,6 @@
 import Element from "./element.js"
 import { html } from "lit-html"
-import { users, page, userId, title, actions } from "../signals.js"
+import { page, userId,  actions } from "../signals.js"
 
 class PageLogin extends Element {
   submit = async (e) => {
@@ -31,7 +31,6 @@ class PageLogin extends Element {
   }
 
   render() {
-    title.value = `Logga in`
     actions.value = html`<button @click=${this.submit}>Logga in</button>`
 
     return html`

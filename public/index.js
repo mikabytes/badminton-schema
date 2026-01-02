@@ -1,4 +1,4 @@
-import { page, users, hmr, showMenu } from "./signals.js"
+import { page, hmr, showMenu } from "./signals.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
 import "./routing.js"
@@ -22,14 +22,13 @@ async function testIsLoggedIn() {
   if (localStorage.token) {
     try {
       // lets test if we can get something
-      const res = await fetch(`/users`, {
+      const res = await fetch(`/current-user`, {
         headers: {
           Authorization: `Bearer ${localStorage.token}`,
         },
       })
 
       if (res.ok) {
-        users.value = await res.json()
         console.log(`Logged in`)
         return
       }

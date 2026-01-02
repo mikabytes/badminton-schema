@@ -6,7 +6,7 @@ import "./menu.js"
 
 import {versions} from "./element.js"
 import { html, render } from "html"
-import { showMenu, page, title, actions, hmr } from "../signals.js"
+import { showMenu, page, actions, hmr } from "../signals.js"
 import { effect } from "../reactive.js"
 
 const titles = {
