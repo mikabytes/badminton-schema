@@ -1,6 +1,6 @@
 import { signal, effect } from "../reactive.js"
 import { render, html } from "lit-html"
-import { hmr } from "../signals.js"
+import hmr from "features/hmr.js"
 
 export default class ReactiveElement extends HTMLElement {
   #cancelEffect = undefined

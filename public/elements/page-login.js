@@ -1,6 +1,7 @@
 import Element from "./element.js"
 import { html } from "lit-html"
-import { page, userId,  actions } from "../signals.js"
+import page from "features/page.js"
+import userId from "features/userId.js"
 
 class PageLogin extends Element {
   submit = async (e) => {

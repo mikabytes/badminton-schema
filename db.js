@@ -1,6 +1,5 @@
 import { Sequelize, DataTypes, sql } from "@sequelize/core"
 import { SqliteDialect } from "@sequelize/sqlite3"
-import generateEvents from "./events.js"
 
 const { STRING, BOOLEAN, SMALLINT, TIME, DATE, DATEONLY, INTEGER } = DataTypes
 

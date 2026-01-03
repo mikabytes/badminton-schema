@@ -8,4 +8,4 @@ users.load = () => {
   request(`get`, `/users`)
 }
 
-export default users
+export default Object.seal(users)

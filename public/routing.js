@@ -1,9 +1,8 @@
 import { effect } from "./reactive.js"
-import { page } from "./signals.js"
+import page from "features/page.js"
 
 function setPageFromHash() {
   page.value = document.location.hash.split(`#`)[1]
-  console.log(page.value)
 }
 
 window.addEventListener(`hashchange`, e => {

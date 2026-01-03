@@ -1,6 +1,7 @@
 import Element from "./element.js"
 import { html } from "lit-html"
-import { showMenu, page} from "../signals.js"
+import page from "features/page.js"
+import showMenu from "features/showMenu.js"
 
 class Menu extends Element {
   render() {

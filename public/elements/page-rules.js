@@ -1,7 +1,7 @@
 import Element from "./element.js"
 import { html } from "lit-html"
 import { signal } from "../reactive.js"
-import { rules } from "../signals.js"
+import rules from "features/rules.js"
 
 class PageRules extends Element {
 
@@ -225,6 +225,10 @@ class PageRules extends Element {
 
         .save, #new-rule {
           background-color: var(--primary-action);
+        }
+
+        #new-rule {
+          margin-top: 30px;
         }
 
         .time {

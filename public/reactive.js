@@ -18,11 +18,10 @@ function schedule(effect) {
   }
 }
 
-export function signal(initial) {
+export function signal(initial, _fields={ error: null, loading: false}) {
+  const fields = {..._fields, value: initial }
   const subscribers = new Set()
   let value = initial
-  let error = null
-  let loading = false
 
   const read = () => {
     if (activeEffect) subscribers.add(activeEffect)
@@ -39,40 +38,26 @@ export function signal(initial) {
     })
   }
 
-  return {
-    get value() {
-      read()
-      return value
-    },
-    set value(val) {
-      value = val
-      announce()
-    },
+  const target = {}
+  const descriptors = {}
 
-    get error() {
-      read()
-      return error
-    },
-    set error(err) {
-      if (Object.is(err, error)) {
-        return
-      }
-      error = err
-      announce()
-    },
-
-    get loading() {
-      read()
-      return loading
-    },
-    set loading(load) {
-      if (Object.is(load, loading)) {
-        return
-      }
-      loading = load
-      announce()
+  for (const key of Object.keys(fields)) {
+    descriptors[key] = {
+      get() { 
+        read()
+        return fields[key] 
+      },
+      set(val) { 
+        fields[key] = val 
+        announce()
+      },
+      enumerable: true,
     }
   }
+
+  Object.defineProperties(target, descriptors)
+
+  return target
 }
 
 export function effect(fn) {

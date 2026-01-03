@@ -6,8 +6,11 @@ import "./menu.js"
 
 import {versions} from "./element.js"
 import { html, render } from "html"
-import { showMenu, page, actions, hmr } from "../signals.js"
 import { effect } from "../reactive.js"
+
+import hmr from "features/hmr.js"
+import showMenu from "features/showMenu.js"
+import page from "features/page.js"
 
 const titles = {
   rsvp: `Bokning`,
@@ -123,7 +126,8 @@ effect(() =>  {
     <div id="content">
       <x-page-${page.value} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
     </div>
-    <div id="footer" style="display: ${actions.value ? `block` : `none`}">${actions.value}</div>
+    <style>#footer:empty { display: none; }</style>
+    <div id="footer"></div>
     <x-menu id="menu" ?hidden=${!showMenu.value}></x-menu>
   `
 

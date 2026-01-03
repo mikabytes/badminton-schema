@@ -1,4 +1,6 @@
-import { page, hmr, showMenu } from "./signals.js"
+import hmr from "features/hmr.js"
+import showMenu from "features/showMenu.js"
+import page from "features/page.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
 import "./routing.js"
@@ -30,6 +32,7 @@ async function testIsLoggedIn() {
 
       if (res.ok) {
         console.log(`Logged in`)
+        page.value = `rsvp`
         return
       }
     } catch (e) {}

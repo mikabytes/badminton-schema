@@ -1,40 +1,48 @@
 import Element from "./element.js"
-import error from "./error.js"
+import loading from "./loading.js"
 import { html } from "html"
-import { userId, actions } from "../signals.js"
 import users from "features/users.js"
-import schema from "features/schema.js"
+import rules from "features/rules.js"
+import skips from "features/skips.js"
+import responses from "features/responses.js"
+import userId from "features/userId.js"
+import generateEvents from "../events.js"
+
+const formatter = new Intl.DateTimeFormat("sv-SE", {
+  weekday: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+})
 
 class PageRsvp extends Element {
 
   async connectedCallback() {
     super.connectedCallback()
 
-    schema.load()
+    rules.load()
+    skips.load()
     users.load()
+    responses.load()
   }
 
-  render() {
-    return error(schema, users) || 
-      (schema.loading || users.loading) && html`` || 
-      this.renderSchema()
-  }
-
-  renderSchema() {
-    const err = error(schema, users)
-    if (err) {
-      return err
-    }
-    if (schema.loading || users.loading) {
-      return html``
-    }
-
+  prepare() {
     const collated = []
+
+    let from = new Date()
+    from.setHours(0)
+    from.setMinutes(0)
+    from.setSeconds(0)
+    from.setMilliseconds(0)
+
+    let to = new Date(from)
+    to.setFullYear(to.getFullYear() + 1)
+
+    const events = generateEvents(rules.value, skips.value, from, to)
 
     let week
     let weekEvents = []
 
-    for (const event of schema.value) {
+    for (const event of events) {
       let eventWeek = getISOWeek(event.date)
       if (!week) {
         week = eventWeek
@@ -59,13 +67,12 @@ class PageRsvp extends Element {
       })
     }
 
-    const formatter = new Intl.DateTimeFormat("sv-SE", {
-      weekday: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return collated
+  }
 
-    return html` <style>
+  render() {
+    return loading(rules, skips, users, responses) || html` 
+      <style>
         :host {
           display: flex;
           flex-direction: column;
@@ -177,7 +184,7 @@ class PageRsvp extends Element {
         }
 
       </style>
-      ${collated.map(
+      ${this.prepare().map(
         (group) => html`
           <section>
             <h2>Vecka ${group.week}</h2>
