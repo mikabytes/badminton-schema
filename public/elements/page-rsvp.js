@@ -70,6 +70,29 @@ class PageRsvp extends Element {
     return collated
   }
 
+  async answer(event, yes) {
+    try {
+      const res = await fetch(`/responses/${userId.value}`, {
+        method: `put`,
+        body: JSON.stringify(yes),
+        headers: {
+          Authorization: `Bearer ${localStorage.token}`,
+          "Content-Type": `application/json`
+        }
+      })
+
+      if (!res.ok) {
+        alert(`Något gick fel.`)
+        console.error(`HTTP ${res.status}: ${await res.text()}`
+        return
+      }
+
+      responses.load()
+    } catch(e) {
+      alert(`Network issue? ${e.message}`)
+    }
+  }
+
   render() {
     return loading(rules, skips, users, responses) || html` 
       <style>
@@ -189,25 +212,32 @@ class PageRsvp extends Element {
           <section>
             <h2>Vecka ${group.week}</h2>
             ${group.events.map(
-              (event) => html`
-                <div class="event">
-                  <div class="attending">
-                    <div class="icon">👤</div>
-                    10
+              (event) => {
+                const eventResponses = responses.value.filter(it => it.ts === event.ts)
+                const myAnswer = eventResponses.find(it => it.userId === userId.value && it.ts === event.ts)
+
+                const yes = myAnswer === 1
+                const no = myAnswer === 0
+
+                return html`
+                  <div class="event">
+                    <div class="attending">
+                      <div class="icon">👤</div>
+                      ${eventResponses.length}
+                    </div>
+                    <div
+                      class="date"
+                      title="${event.date.toISOString().slice(0, 10)}"
+                    >
+                      ${formatter.format(event.date)}
+                    </div>
+                    <div class="quick-actions">
+                      <button @click=${() => this.answer(event, 1)} class="yes ${yes ? `selected` : ``}" title="Yes, I'm going">✓</button
+                      ><button @click=${() => this.answer(event, 0)} class="no ${no ? `selected` : ``}" title="No, I'm not going">✗</button>
+                    </div>
                   </div>
-                  <div
-                    class="date"
-                    title="${event.date.toISOString().slice(0, 10)}"
-                  >
-                    ${formatter.format(event.date)}
-                  </div>
-                  <div class="quick-actions">
-                    <button class="yes selected" title="Yes, I'm going">
-                      ✓</button
-                    ><button class="no" title="No, I'm not going">✗</button>
-                  </div>
-                </div>
-              `
+                `
+              }
             )}
           </section>
         `

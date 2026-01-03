@@ -10,7 +10,7 @@ export default function generateEvents(rules, skips, from, to) {
   const toMs = to.getTime()
 
   // Normalize skip timestamps: treat 10-digit values as seconds, 13-digit as milliseconds.
-  const skipSet = new Set(skips.map((s) => s.getTime()))
+  const skipSet = new Set(skips.map((s) => s.date.getTime()))
 
   const events = []
 
@@ -31,7 +31,7 @@ export default function generateEvents(rules, skips, from, to) {
 
       if (ms >= fromMs && ms <= toMs) {
         const skipped = skipSet.has(ms)
-        events.push({ date: occurrence, skipped })
+        events.push({ ts: Math.floor(occurrence.getTime() / 60000), date: occurrence, skipped })
       }
 
       // Small optimization: if even the current occurrence is > to, and we're stepping forward, we can break.

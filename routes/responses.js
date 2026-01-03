@@ -14,3 +14,13 @@ app.get(`/`, async (req, res) => {
     res.status(500).send(e.message)
   }
 })
+
+app.put(`/:userId`, async (req, res) => {
+  try {
+    const responses = await Response.findAll()
+    res.json(responses)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send(e.message)
+  }
+})

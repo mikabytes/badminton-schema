@@ -1,6 +1,7 @@
 import hmr from "features/hmr.js"
 import showMenu from "features/showMenu.js"
 import page from "features/page.js"
+import userId from "features/userId.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
 import "./routing.js"
@@ -32,6 +33,7 @@ async function testIsLoggedIn() {
 
       if (res.ok) {
         console.log(`Logged in`)
+        userId.value = (await res.json()).userId
         page.value = `rsvp`
         return
       }
