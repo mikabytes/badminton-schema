@@ -1,36 +1,10 @@
+
 import Element from "./element.js"
 import { html } from "lit-html"
 import page from "features/page.js"
 import user from "features/user.js"
 
-class PageLogin extends Element {
-  submit = async (e) => {
-    e.preventDefault()
-
-    const input = this.shadowRoot.querySelector(`input`)
-    const code = this.shadowRoot.querySelector(`#text`).value.trim()
-
-    try {
-      input.disabled = true
-
-      const res = await fetch(`/current-user`, {
-        headers: {
-          Authorization: `Bearer ${code}`,
-        },
-      })
-
-      if (res.ok) {
-        const json = await res.json()
-        localStorage.token = code
-        user.value = json
-        page.value = `rsvp`
-        return
-      }
-    } finally {
-      input.disabled = false
-    }
-  }
-
+class PageEvent extends Element {
   render() {
     this.setActions(html`<button @click=${this.submit}>Logga in</button>`)
 
@@ -63,4 +37,4 @@ class PageLogin extends Element {
   }
 }
 
-customElements.define("x-page-login", PageLogin)
+customElements.define("x-page-event", PageEvent)

@@ -73,6 +73,11 @@ class Menu extends Element {
         hr {
           margin: 16px 0;
         }
+
+        #logout {
+          position: absolute;
+          bottom: 0;
+        }
       </style>
       <div id="curtain" @click=${() => { showMenu.value = false }}></div>
       <nav>
@@ -84,6 +89,7 @@ class Menu extends Element {
         <li><button @click=${() => { navigate(`rsvp`) }}>Bokning</li>
         <li><button @click=${() => { navigate(`members`)}}>Medlemmar</li>
         <li><button @click=${() => { navigate(`rules`)}}>Schema</li>
+        <li id="logout"><button @click=${() => { localStorage.token = null; document.location.reload() }}>Logga ut</li>
       </nav>
 
     `
