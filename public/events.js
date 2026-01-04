@@ -31,7 +31,8 @@ export default function generateEvents(rules, skips, from, to) {
 
       if (ms >= fromMs && ms <= toMs) {
         const skipped = skipSet.has(ms)
-        events.push({ ts: Math.floor(occurrence.getTime() / 60000), date: occurrence, skipped })
+        const ts = Math.floor(occurrence.getTime() / 60000)
+        events.push({ id: ts, ts, date: occurrence, skipped })
       }
 
       // Small optimization: if even the current occurrence is > to, and we're stepping forward, we can break.

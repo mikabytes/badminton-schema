@@ -9,6 +9,7 @@ responses.load = () => {
     for (const entry of data) {
       entry.date = new Date(entry.ts * 60000)
     }
+    return data
   })
 }
 

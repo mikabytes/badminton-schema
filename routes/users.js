@@ -21,7 +21,7 @@ app.get(`/current-user`, async (req, res) => {
   res.json(req.user)
 })
 
-app.put(`/users/:userId/events/:ts/response`, async (req, res) => {
+app.put(`/:userId/events/:ts/response`, async (req, res) => {
   const userId = +req.params.userId
 
   if (!req.user.isAdmin && userId !== req.user.id) {
@@ -47,7 +47,7 @@ app.put(`/users/:userId/events/:ts/response`, async (req, res) => {
     return res.status(404).send(`No such event.`)
   }
 
-  const response = req.body
+  const response = req.body.value
 
   if (![0,1].includes(response)) {
     return res.status(400).send(`Invalid response: ${req.body}`)
@@ -56,8 +56,8 @@ app.put(`/users/:userId/events/:ts/response`, async (req, res) => {
   await Response.upsert({
     ts,
     userId,
-    req.body
+    response
   })
 
-  res.status(204)
+  res.status(204).send()
 })

@@ -109,7 +109,7 @@ effect(() =>  {
         cursor: pointer;
       }
     </style>
-    <nav>
+    <nav style="z-index: 1;">
       <h1>${titles[page.value] || ``}</h1>
       <button
         id="hamburger"
@@ -127,7 +127,7 @@ effect(() =>  {
       <x-page-${page.value} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
     </div>
     <style>#footer:empty { display: none; }</style>
-    <div id="footer"></div>
+    <div id="footer" style="z-index: 1;"></div>
     <x-menu id="menu" ?hidden=${!showMenu.value}></x-menu>
   `
 

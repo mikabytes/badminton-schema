@@ -1,7 +1,7 @@
 import Element from "./element.js"
 import { html } from "lit-html"
 import page from "features/page.js"
-import userId from "features/userId.js"
+import user from "features/user.js"
 
 class PageLogin extends Element {
   submit = async (e) => {
@@ -22,7 +22,7 @@ class PageLogin extends Element {
       if (res.ok) {
         const json = await res.json()
         localStorage.token = code
-        userId.value = json.id
+        user.value = json
         page.value = `rsvp`
         return
       }

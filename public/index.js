@@ -1,7 +1,7 @@
 import hmr from "features/hmr.js"
 import showMenu from "features/showMenu.js"
 import page from "features/page.js"
-import userId from "features/userId.js"
+import user from "features/user.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
 import "./routing.js"
@@ -33,8 +33,7 @@ async function testIsLoggedIn() {
 
       if (res.ok) {
         console.log(`Logged in`)
-        userId.value = (await res.json()).userId
-        page.value = `rsvp`
+        user.value = await res.json()
         return
       }
     } catch (e) {}
@@ -61,6 +60,8 @@ source.onmessage = (message) => {
       // this will re-load it, and when doing customElements.define will
       // automatically trigger the hmr signal and re-render everything
       import(`${path.replace(/^public/, ``)}?d=${Date.now()}`)
+    } else {
+      document.location.reload()
     }
   }
 

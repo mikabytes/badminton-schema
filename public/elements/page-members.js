@@ -2,17 +2,17 @@
 import Element from "./element.js"
 import { html } from "lit-html"
 import users from "features/users.js"
+import error from "./error.js"
 
 class PageMembers extends Element {
 
   connectedCallback() {
+    super.connectedCallback()
     users.load()
   }
 
   render() {
-
-
-    return html`
+    return error(users) || html`
       <style>
         :host {
 
@@ -69,7 +69,7 @@ class PageMembers extends Element {
         }
       </style>
       <ul>
-        ${users.value.map(user => html`
+        ${users.value.sort((a,b) => a.name < b.name ? -1 : 1).map(user => html`
           <li>
             <div class="user">
               <div class="name">${user.name}</div>

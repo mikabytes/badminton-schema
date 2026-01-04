@@ -13,6 +13,7 @@ class Menu extends Element {
     return html`
       <style>
         :host {
+          z-index: 2;
           display: flex;
           position: absolute;
           top: 0px;
@@ -73,7 +74,7 @@ class Menu extends Element {
           margin: 16px 0;
         }
       </style>
-      <div id="curtain"></div>
+      <div id="curtain" @click=${() => { showMenu.value = false }}></div>
       <nav>
         <div>
           <div><span id="login-text">Inloggad som:</span><br /><span id="name">Mikael Wikman</span></div>

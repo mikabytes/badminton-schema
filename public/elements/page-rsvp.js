@@ -1,11 +1,11 @@
 import Element from "./element.js"
-import loading from "./loading.js"
+import error from "./error.js"
 import { html } from "html"
 import users from "features/users.js"
 import rules from "features/rules.js"
 import skips from "features/skips.js"
 import responses from "features/responses.js"
-import userId from "features/userId.js"
+import user from "features/user.js"
 import generateEvents from "../events.js"
 
 const formatter = new Intl.DateTimeFormat("sv-SE", {
@@ -70,31 +70,8 @@ class PageRsvp extends Element {
     return collated
   }
 
-  async answer(event, yes) {
-    try {
-      const res = await fetch(`/responses/${userId.value}`, {
-        method: `put`,
-        body: JSON.stringify(yes),
-        headers: {
-          Authorization: `Bearer ${localStorage.token}`,
-          "Content-Type": `application/json`
-        }
-      })
-
-      if (!res.ok) {
-        alert(`Något gick fel.`)
-        console.error(`HTTP ${res.status}: ${await res.text()}`
-        return
-      }
-
-      responses.load()
-    } catch(e) {
-      alert(`Network issue? ${e.message}`)
-    }
-  }
-
   render() {
-    return loading(rules, skips, users, responses) || html` 
+    return error(rules, skips, users, responses) || html` 
       <style>
         :host {
           display: flex;
@@ -214,16 +191,16 @@ class PageRsvp extends Element {
             ${group.events.map(
               (event) => {
                 const eventResponses = responses.value.filter(it => it.ts === event.ts)
-                const myAnswer = eventResponses.find(it => it.userId === userId.value && it.ts === event.ts)
+                const myAnswer = eventResponses.find(it => it.userId === user.value.id && it.ts === event.ts)
 
-                const yes = myAnswer === 1
-                const no = myAnswer === 0
+                const yes = myAnswer?.response === 1
+                const no = myAnswer?.response === 0
 
                 return html`
                   <div class="event">
                     <div class="attending">
                       <div class="icon">👤</div>
-                      ${eventResponses.length}
+                      ${eventResponses.filter(e => e.response === 1).length}
                     </div>
                     <div
                       class="date"
@@ -232,8 +209,8 @@ class PageRsvp extends Element {
                       ${formatter.format(event.date)}
                     </div>
                     <div class="quick-actions">
-                      <button @click=${() => this.answer(event, 1)} class="yes ${yes ? `selected` : ``}" title="Yes, I'm going">✓</button
-                      ><button @click=${() => this.answer(event, 0)} class="no ${no ? `selected` : ``}" title="No, I'm not going">✗</button>
+                      <button @click=${() => user.respond(event.id, 1)} class="yes ${yes ? `selected` : ``}" title="Yes, I'm going">✓</button
+                      ><button @click=${() => user.respond(event.id, 0)} class="no ${no ? `selected` : ``}" title="No, I'm not going">✗</button>
                     </div>
                   </div>
                 `
