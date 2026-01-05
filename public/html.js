@@ -3,8 +3,9 @@ import { versions } from "./elements/element.js"
 
 
 export function html(strings, ...values) {
-  let valuesRemoved = []
   const stringsOut = [...strings]
+  stringsOut[0] = stringsOut[0].trimStart()
+  stringsOut[stringsOut.length-1] = stringsOut[stringsOut.length-1].trimEnd()
 
   // we also need to handle the special case of x-page-${currentPage}
   for (let i = 0; i < stringsOut.length; i++) {
@@ -16,7 +17,6 @@ export function html(strings, ...values) {
       const b = String(stringsOut.splice(i+1, 1)[0])
 
       stringsOut[i] = a + val + b
-      valuesRemoved.push(i)
     }
 
     for (const [tagName, version] of versions.entries()) {

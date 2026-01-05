@@ -1,7 +1,12 @@
 import { effect } from "./reactive.js"
 import page from "features/page.js"
 
-function setPageFromHash() {
+export function getPageFromHash() {
+  const page = document.location.hash.split(`#`)[1]
+  return page
+}
+
+export function setPageFromHash() {
   const hash = document.location.hash.split(`#`)[1]
 
   if (hash) {
@@ -14,8 +19,9 @@ function setPageFromHash() {
 window.addEventListener(`hashchange`, e => {
   setPageFromHash()
 })
-setPageFromHash()
 
 effect(() => {
-  document.location.hash = `#${page.value}`
+  if (page.value) {
+    document.location.hash = `#${page.value}`
+  }
 })

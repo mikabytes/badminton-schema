@@ -4,7 +4,8 @@ import page from "features/page.js"
 import user from "features/user.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
-import "./routing.js"
+import { preload } from "./elements/element.js"
+import { getPageFromHash } from "./routing.js"
 import "./elements/layout.js"
 
 // clean up the DOM, already loaded scripts are just DOM junk
@@ -21,6 +22,8 @@ if ("serviceWorker" in navigator) {
   })
 }
 
+window.initialPage = getPageFromHash()
+
 async function testIsLoggedIn() {
   if (localStorage.token) {
     try {
@@ -32,8 +35,8 @@ async function testIsLoggedIn() {
       })
 
       if (res.ok) {
-        console.log(`Logged in`)
         user.value = await res.json()
+        page.value = window.initialPage || `rsvp`
         return
       }
     } catch (e) {}
@@ -42,28 +45,5 @@ async function testIsLoggedIn() {
   page.value = `login`
 }
 
+await preload()
 await testIsLoggedIn()
-
-// Hot Module Reloading (listening to file changes)
-const source = new EventSource(`/changes`)
-source.onmessage = (message) => {
-  const { path, exists } = JSON.parse(message.data)
-
-  if (!exists) {
-    console.log(`${path} was deleted!`)
-
-    document.location.reload()
-  } else {
-    console.log(`${path} was modified.`)
-
-    if (path.startsWith(`public/elements`) && path !== `public/elements/layout.js`) {
-      // this will re-load it, and when doing customElements.define will
-      // automatically trigger the hmr signal and re-render everything
-      import(`${path.replace(/^public/, ``)}?d=${Date.now()}`)
-    } else {
-      document.location.reload()
-    }
-  }
-
-  // Use that specific file for hot reloading, or do a full page refresh
-}

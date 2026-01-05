@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, `public`)))
 
 hotserve({
   dir: path.join(__dirname, `public`),
-  pattern: `*.js`,
+  pattern: `*.{js,css}`,
   app,
 })
 

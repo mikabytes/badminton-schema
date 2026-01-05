@@ -23,7 +23,7 @@ class PageLogin extends Element {
         const json = await res.json()
         localStorage.token = code
         user.value = json
-        page.value = `rsvp`
+        page.value = window.initialPage || `rsvp`
         return
       }
     } finally {
