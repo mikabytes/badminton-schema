@@ -10,6 +10,7 @@
   border: 1px solid var(--border);
   background-color: var(--background-panel);
   display: flex;
+  cursor: pointer;
 }
 
 .date {

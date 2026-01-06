@@ -124,7 +124,7 @@ effect(() =>  {
       </button>
     </nav>
     <div id="content">
-      <x-page-${page.value} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
+      <x-page-${page.value?.main} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
     </div>
     <style>#footer:empty { display: none; }</style>
     <div id="footer" style="z-index: 1;"></div>

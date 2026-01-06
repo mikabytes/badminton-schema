@@ -36,7 +36,7 @@ async function testIsLoggedIn() {
 
       if (res.ok) {
         user.value = await res.json()
-        page.value = window.initialPage || `rsvp`
+        page.value = window.initialPage || { main: `rsvp` }
         return
       }
     } catch (e) {}

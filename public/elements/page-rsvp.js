@@ -4,9 +4,12 @@ import { html } from "html"
 import users from "features/users.js"
 import rules from "features/rules.js"
 import skips from "features/skips.js"
+import page from "features/page.js"
 import responses from "features/responses.js"
 import user from "features/user.js"
 import generateEvents from "../events.js"
+import "./page-details.js"
+import { signal } from "../reactive.js"
 
 const formatter = new Intl.DateTimeFormat("sv-SE", {
   weekday: "short",
@@ -16,6 +19,8 @@ const formatter = new Intl.DateTimeFormat("sv-SE", {
 
 class PageRsvp extends Element {
   static css = new URL(`./page-rsvp.css`, import.meta.url)
+
+  #details = signal(null, {})
 
   async connectedCallback() {
     super.connectedCallback()
@@ -86,7 +91,7 @@ class PageRsvp extends Element {
                 const no = myAnswer?.response === 0
 
                 return html`
-                  <div class="event">
+                  <div class="event" @click=${() => { page.value = { ...page.value, sub: `details`, item: event.id } }}> 
                     <div class="attending">
                       <div class="icon">👤</div>
                       ${eventResponses.filter(e => e.response === 1).length}
@@ -106,6 +111,9 @@ class PageRsvp extends Element {
               }
             )}
           </section>
+          ${page.value.sub !== `details` ? html`` : html`
+            <x-page-details .setActions=${this.setActions}></x-page-details>
+          `}
         `
       )}`
   }
