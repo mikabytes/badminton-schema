@@ -111,11 +111,7 @@ class PageRsvp extends Element {
               }
             )}
           </section>
-          ${page.value.sub !== `details` ? html`` : html`
-            <x-page-details .setActions=${this.setActions}></x-page-details>
-          `}
-        `
-      )}`
+        `)}`
   }
 }
 

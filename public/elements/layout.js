@@ -22,6 +22,10 @@ effect(() =>  {
   // ensure we're subscribed to HMR changes
   hmr.value
 
+  function setActions(it) {
+    render(it || html``, document.querySelector(`#footer`))
+  }
+
   const out = html`
     <style>
 
@@ -108,6 +112,43 @@ effect(() =>  {
         letter-spacing: 1.5px;
         cursor: pointer;
       }
+
+      #sub-curtain {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 0px;
+        bottom: 55px;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.15);
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      #frame {
+        position: absolute;
+        background-color: var(--background-panel);
+        border: 1px solid var(--border);
+        overflow-x: scroll;
+        width: 100%;
+      }
+
+      @media (min-width: 600px) {
+        #frame {
+          height: 100%;
+          max-width: 600px;
+          max-height: 600px;
+        }
+      }
+
+      @media (min-width: 0px) and (max-width: 599px) {
+        #frame {
+          top: 0;
+          bottom: 0px;
+        }
+      }
     </style>
     <nav style="z-index: 1;">
       <h1>${titles[page.value] || ``}</h1>
@@ -124,11 +165,19 @@ effect(() =>  {
       </button>
     </nav>
     <div id="content">
-      <x-page-${page.value?.main} .setActions=${it => render(it || html``, document.querySelector(`#footer`))}></x-page-${page.value}>
+      <x-page-${page.value?.main} .setActions=${setActions}></x-page-${page.value}>
     </div>
     <style>#footer:empty { display: none; }</style>
     <div id="footer" style="z-index: 1;"></div>
     <x-menu id="menu" ?hidden=${!showMenu.value}></x-menu>
+
+    ${page.value?.sub !== `details` ? html`` : html`
+      <div id="sub-curtain">
+        <div id="frame">
+          <x-page-details .setActions=${setActions}></x-page-details>
+        </div>
+      </div>
+    `}
   `
 
   render(out, document.body)
