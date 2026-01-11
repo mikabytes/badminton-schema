@@ -5,9 +5,11 @@ const responses = signal([])
 const request = Request(responses)
 
 responses.load = () => {
-  request(`get`, `/responses`, null, data => {
+  request(`get`, `/responses`, null, (data) => {
     for (const entry of data) {
       entry.date = new Date(entry.ts * 60000)
+      entry.yes = entry.response === 1
+      entry.no = entry.response === 0
     }
     return data
   })

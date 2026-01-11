@@ -29,6 +29,10 @@ class PageDetails extends Element {
       return err
     }
 
+    if (!rules.value || !skips.value || !users.value || !responses.value) {
+      return html``
+    }
+
     const eventId = page.value.item
     const date = eventId * 60000
 
@@ -44,13 +48,72 @@ class PageDetails extends Element {
     }
 
     const event = events[0]
+    const eventResponses = responses.value.filter((it) => it.ts === event.ts)
+
+    for (const e of eventResponses) {
+      e.user = users.value.find((u) => u.id === e.userId)
+    }
+
+    const myAnswer = eventResponses.find(
+      (it) => it.userId === user.value.id && it.ts === event.ts
+    )
+
+    const yeses = eventResponses.filter((e) => e.yes)
+    const noes = eventResponses.filter((e) => e.no)
 
     this.setActions(html`<button @click=${this.remove}>Ta bort</button>`)
 
     return html`
+      <button
+        id="close"
+        @click=${() => {
+          page.value = { main: `rsvp` }
+        }}
+      >
+        ✕
+      </button>
       <h1>${capitalizeFirst(formatter.format(event.date))}</h1>
       <hr />
-      <pre>${JSON.stringify(event)}</pre>
+      <div class="quick-actions">
+        Mitt svar:
+        <button
+          @click=${() => user.respond(event.id, 1)}
+          class="yes ${myAnswer?.yes ? `selected` : ``}"
+          title="Yes, I'm going"
+        >
+          ✓ Ja</button
+        ><button
+          @click=${() => user.respond(event.id, 0)}
+          class="no ${myAnswer?.no ? `selected` : ``}"
+          title="No, I'm not going"
+        >
+          ✗ Nej
+        </button>
+      </div>
+
+      <h2>Närvarar (${yeses.length} personer)</h2>
+      ${yeses.length === 0 ? `Ingen har anmält sig till detta event.` : ``}
+      <ul>
+        ${eventResponses.filter((e) => e.yes).map((e) => this.person(e))}
+      </ul>
+
+      ${noes.length === 0
+        ? ``
+        : html`
+            <h2>Kommer inte:</h2>
+            <ul>
+              ${eventResponses.filter((e) => e.no).map((e) => this.person(e))}
+            </ul>
+          `}
+    `
+  }
+
+  person(e) {
+    return html`
+      <li>
+        <img src="/photos/${e.user.picturePath}" />
+        ${e.user.name}
+      </li>
     `
   }
 }
@@ -63,7 +126,6 @@ function capitalizeFirst(str) {
 
 const formatter = new Intl.DateTimeFormat("sv-SE", {
   weekday: "long",
-  year: "numeric",
   month: "long",
   day: "numeric",
   hour: "2-digit",

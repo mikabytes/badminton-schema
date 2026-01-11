@@ -4,7 +4,7 @@ import "./page-members.js"
 import "./page-rules.js"
 import "./menu.js"
 
-import {versions} from "./element.js"
+import { versions } from "./element.js"
 import { html, render } from "html"
 import { effect } from "../reactive.js"
 
@@ -16,9 +16,19 @@ const titles = {
   rsvp: `Bokning`,
   members: `Medlemmar`,
   rules: `Schemaregler`,
+  login: `Logga in`,
 }
 
-effect(() =>  {
+function curtainClick(e) {
+  console.log(e)
+  if (e.target === document.querySelector(`#sub-curtain`)) {
+    delete page.value.sub
+    delete page.value.item
+    page.value = page.value
+  }
+}
+
+effect(() => {
   // ensure we're subscribed to HMR changes
   hmr.value
 
@@ -151,13 +161,13 @@ effect(() =>  {
       }
     </style>
     <nav style="z-index: 1;">
-      <h1>${titles[page.value] || ``}</h1>
+      <h1>${titles[page.value?.main] || ``}</h1>
       <button
         id="hamburger"
         aria-label="Open menu"
         aria-expanded="${String(showMenu.value)}"
         aria-controls="main-menu"
-        @click=${() => showMenu.value = !showMenu.value}
+        @click=${() => (showMenu.value = !showMenu.value)}
       >
         <div></div>
         <div></div>
@@ -171,13 +181,17 @@ effect(() =>  {
     <div id="footer" style="z-index: 1;"></div>
     <x-menu id="menu" ?hidden=${!showMenu.value}></x-menu>
 
-    ${page.value?.sub !== `details` ? html`` : html`
-      <div id="sub-curtain">
-        <div id="frame">
-          <x-page-details .setActions=${setActions}></x-page-details>
-        </div>
-      </div>
-    `}
+    ${
+      page.value?.sub !== `details`
+        ? html``
+        : html`
+            <div id="sub-curtain" @click=${curtainClick}>
+              <div id="frame">
+                <x-page-details .setActions=${setActions}></x-page-details>
+              </div>
+            </div>
+          `
+    }
   `
 
   render(out, document.body)

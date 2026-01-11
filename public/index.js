@@ -36,13 +36,21 @@ async function testIsLoggedIn() {
 
       if (res.ok) {
         user.value = await res.json()
-        page.value = window.initialPage || { main: `rsvp` }
+        if (
+          window.initialPage &&
+          window.initialPage.main &&
+          window.initialPage.main !== `login`
+        ) {
+          page.value = window.initialPage
+        } else {
+          page.value = { main: `rsvp` }
+        }
         return
       }
     } catch (e) {}
   }
 
-  page.value = `login`
+  page.value = { main: `login` }
 }
 
 await preload()

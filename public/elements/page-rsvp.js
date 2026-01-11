@@ -77,41 +77,70 @@ class PageRsvp extends Element {
   }
 
   render() {
-    return error(rules, skips, users, responses) || html` 
-      ${this.prepare().map(
-        (group) => html`
-          <section>
-            <h2>Vecka ${group.week}</h2>
-            ${group.events.map(
-              (event) => {
-                const eventResponses = responses.value.filter(it => it.ts === event.ts)
-                const myAnswer = eventResponses.find(it => it.userId === user.value.id && it.ts === event.ts)
+    const err = error(rules, skips, users, responses)
 
-                const yes = myAnswer?.response === 1
-                const no = myAnswer?.response === 0
+    if (err) {
+      return err
+    }
 
-                return html`
-                  <div class="event" @click=${() => { page.value = { ...page.value, sub: `details`, item: event.id } }}> 
-                    <div class="attending">
-                      <div class="icon">👤</div>
-                      ${eventResponses.filter(e => e.response === 1).length}
-                    </div>
-                    <div
-                      class="date"
-                      title="${event.date.toISOString().slice(0, 10)}"
-                    >
-                      ${formatter.format(event.date)}
-                    </div>
-                    <div class="quick-actions">
-                      <button @click=${() => user.respond(event.id, 1)} class="yes ${yes ? `selected` : ``}" title="Yes, I'm going">✓</button
-                      ><button @click=${() => user.respond(event.id, 0)} class="no ${no ? `selected` : ``}" title="No, I'm not going">✗</button>
-                    </div>
-                  </div>
-                `
-              }
-            )}
-          </section>
-        `)}`
+    if (!rules.value || !skips.value || !users.value || !responses.value) {
+      return html``
+    }
+
+    return html` ${this.prepare().map(
+      (group) => html`
+        <section>
+          <h2>Vecka ${group.week}</h2>
+          ${group.events.map((event) => {
+            const eventResponses = responses.value.filter(
+              (it) => it.ts === event.ts
+            )
+            const myAnswer = eventResponses.find(
+              (it) => it.userId === user.value.id && it.ts === event.ts
+            )
+
+            return html`
+              <div
+                class="event"
+                @click=${() => {
+                  page.value = {
+                    ...page.value,
+                    sub: `details`,
+                    item: event.id,
+                  }
+                }}
+              >
+                <div class="attending">
+                  <div class="icon">👤</div>
+                  ${eventResponses.filter((e) => e.response === 1).length}
+                </div>
+                <div
+                  class="date"
+                  title="${event.date.toISOString().slice(0, 10)}"
+                >
+                  ${formatter.format(event.date)}
+                </div>
+                <div class="quick-actions">
+                  <button
+                    @click=${() => user.respond(event.id, 1)}
+                    class="yes ${myAnswer?.yes ? `selected` : ``}"
+                    title="Yes, I'm going"
+                  >
+                    ✓</button
+                  ><button
+                    @click=${() => user.respond(event.id, 0)}
+                    class="no ${myAnswer?.no ? `selected` : ``}"
+                    title="No, I'm not going"
+                  >
+                    ✗
+                  </button>
+                </div>
+              </div>
+            `
+          })}
+        </section>
+      `
+    )}`
   }
 }
 
