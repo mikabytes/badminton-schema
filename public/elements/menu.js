@@ -6,7 +6,7 @@ import showMenu from "features/showMenu.js"
 class Menu extends Element {
   render() {
     function navigate(newPage) {
-      page.value = newPage
+      page.value = { main: newPage }
       showMenu.value = false
     }
 
@@ -79,17 +79,30 @@ class Menu extends Element {
           bottom: 0;
         }
       </style>
-      <div id="curtain" @click=${() => { showMenu.value = false }}></div>
+      <div id="curtain" @click=${() => {
+        showMenu.value = false
+      }}></div>
       <nav>
         <div>
           <div><span id="login-text">Inloggad som:</span><br /><span id="name">Mikael Wikman</span></div>
-          <button id="close" title="Close menu" @click=${() => { showMenu.value = false }}>✕</button>
+          <button id="close" title="Close menu" @click=${() => {
+            showMenu.value = false
+          }}>✕</button>
         </div>
         <hr />
-        <li><button @click=${() => { navigate(`rsvp`) }}>Bokning</li>
-        <li><button @click=${() => { navigate(`members`)}}>Medlemmar</li>
-        <li><button @click=${() => { navigate(`rules`)}}>Schema</li>
-        <li id="logout"><button @click=${() => { localStorage.token = null; document.location.reload() }}>Logga ut</li>
+        <li><button @click=${() => {
+          navigate(`rsvp`)
+        }}>Bokning</li>
+        <li><button @click=${() => {
+          navigate(`members`)
+        }}>Medlemmar</li>
+        <li><button @click=${() => {
+          navigate(`rules`)
+        }}>Schema</li>
+        <li id="logout"><button @click=${() => {
+          localStorage.token = null
+          document.location.reload()
+        }}>Logga ut</li>
       </nav>
 
     `

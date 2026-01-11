@@ -111,7 +111,14 @@ class PageDetails extends Element {
   person(e) {
     return html`
       <li>
-        <img src="/photos/${e.user.picturePath}" />
+        <img
+          data-initials="${e.user.fullName
+            .split(` `)
+            .map((it) => it[0])
+            .join(``)
+            .toUpperCase()}"
+          src="/photos/${e.user.picturePath}"
+        />
         ${e.user.name}
       </li>
     `

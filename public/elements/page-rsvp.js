@@ -122,13 +122,19 @@ class PageRsvp extends Element {
                 </div>
                 <div class="quick-actions">
                   <button
-                    @click=${() => user.respond(event.id, 1)}
+                    @click=${(e) => {
+                      user.respond(event.id, 1)
+                      e.stopPropagation()
+                    }}
                     class="yes ${myAnswer?.yes ? `selected` : ``}"
                     title="Yes, I'm going"
                   >
                     ✓</button
                   ><button
-                    @click=${() => user.respond(event.id, 0)}
+                    @click=${(e) => {
+                      user.respond(event.id, 0)
+                      e.stopPropagation()
+                    }}
                     class="no ${myAnswer?.no ? `selected` : ``}"
                     title="No, I'm not going"
                   >
