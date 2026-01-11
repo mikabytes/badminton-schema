@@ -10,8 +10,11 @@ import users from "./routes/users.js"
 import rules from "./routes/rules.js"
 import responses from "./routes/responses.js"
 import skips from "./routes/skips.js"
+import subscriptions from "./routes/subscriptions.js"
 
 import sequelize, { User } from "./db.js"
+
+const vapidPrivate = `nyQKV7USsDdP2nmrwlHb0thz5imtO0tE-p-llz-1Bs8`
 
 function makePassword(full) {
   return (
@@ -82,5 +85,6 @@ app.use(`/users`, users)
 app.use(`/rules`, rules)
 app.use(`/skips`, skips)
 app.use(`/responses`, responses)
+app.use(`/subscriptions`, subscriptions)
 
 export default app

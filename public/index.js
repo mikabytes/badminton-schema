@@ -4,7 +4,7 @@ import page from "features/page.js"
 import user from "features/user.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
-import { preload } from "./elements/element.js"
+import { preload, getTagName } from "./elements/element.js"
 import { getPageFromHash } from "./routing.js"
 import "./elements/layout.js"
 
@@ -55,3 +55,4 @@ async function testIsLoggedIn() {
 
 await preload()
 await testIsLoggedIn()
+document.body.appendChild(document.createElement(getTagName(`x-layout`)))

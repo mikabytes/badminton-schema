@@ -1,7 +1,8 @@
 import { Sequelize, DataTypes, sql } from "@sequelize/core"
 import { SqliteDialect } from "@sequelize/sqlite3"
 
-const { STRING, BOOLEAN, SMALLINT, TIME, DATE, DATEONLY, INTEGER } = DataTypes
+const { STRING, TEXT, BOOLEAN, SMALLINT, TIME, DATE, DATEONLY, INTEGER } =
+  DataTypes
 
 const sequelize = new Sequelize({
   dialect: SqliteDialect,
@@ -61,15 +62,38 @@ const Response = sequelize.define(
   }
 )
 
+const Subscription = sequelize.define(
+  `Subscription`,
+  {
+    endpoint: STRING,
+    json: TEXT,
+  },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: [`endpoint`],
+      },
+      {
+        fields: [`userId`],
+      },
+    ],
+  }
+)
+
 User.hasMany(Response)
 Response.belongsTo(User)
+
+User.hasMany(Subscription)
+Subscription.belongsTo(User)
 
 await User.sync({ alter: true })
 await Rule.sync({ alter: true })
 await Skip.sync({ alter: true })
 await Response.sync({ alter: true })
+await Subscription.sync({ force: true })
 
 //await Rule.destroy({ where: sql`1 = 1` })
 
-export { User, Rule, Skip, Response }
+export { User, Rule, Skip, Response, Subscription }
 export default sequelize

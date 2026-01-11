@@ -1,0 +1,122 @@
+#content {
+  display: flex;
+  flex: 1 1 auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#content > * {
+  flex: 1 1 auto;
+}
+
+#footer {
+  flex: 0 0 55px;
+  box-sizing: border-box;
+  box-shadow: 0 -3px 3px var(--background-subtle);
+  border-top: 1px var(--border-strong) solid; 
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--background-subtle);
+}
+
+
+nav {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+  background-color: var(--secondary-focus);
+  color: var(--background);
+}
+
+#notifications {
+  margin-right: 10px;
+}
+
+#hamburger {
+  border: 0px;
+  background-color: transparent;
+  margin: 0;
+  padding: 8px;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  position: relative;
+}
+
+#hamburger > div {
+  position: absolute;
+  border-radius: 5px;
+  background-color: var(--background);
+  left: 8px;
+  right: 8px;
+  height: 3px;
+}
+
+#hamburger > div:nth-child(1) {
+  top: 12px;
+}
+#hamburger > div:nth-child(2) {
+  top: 20px;
+}
+#hamburger > div:nth-child(3) {
+  top: 28px;
+}
+
+nav h1 {
+  display: block;
+  margin: 0 auto 0 16px;
+  padding: 0;
+  font-size: 24px;
+}
+
+button, input[type=submit] {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  padding: 16px 8px;
+  background-color: green;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+#sub-curtain {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0px;
+  bottom: 55px;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  overflow: hidden;
+}
+
+#frame {
+  position: absolute;
+  background-color: var(--background-panel);
+  border: 1px solid var(--border);
+  overflow-x: scroll;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  #frame {
+    height: 100%;
+    max-width: 600px;
+    max-height: 600px;
+  }
+}
+
+@media (min-width: 0px) and (max-width: 599px) {
+  #frame {
+    top: 0;
+    bottom: 0px;
+  }
+}
