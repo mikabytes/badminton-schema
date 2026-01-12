@@ -14,8 +14,6 @@ import subscriptions from "./routes/subscriptions.js"
 
 import sequelize, { User } from "./db.js"
 
-const vapidPrivate = `nyQKV7USsDdP2nmrwlHb0thz5imtO0tE-p-llz-1Bs8`
-
 function makePassword(full) {
   return (
     full.substr(0, 3).toLowerCase() +
