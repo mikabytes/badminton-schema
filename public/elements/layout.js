@@ -24,7 +24,7 @@ class Layout extends Element {
   static css = new URL(`./layout.css`, import.meta.url)
 
   render() {
-    function curtainClick(e) {
+    const curtainClick = (e) => {
       if (e.target === this.shadowRoot.querySelector(`#sub-curtain`)) {
         delete page.value.sub
         delete page.value.item
@@ -32,7 +32,7 @@ class Layout extends Element {
       }
     }
 
-    function setActions(it) {
+    const setActions = (it) => {
       render(it || html``, this.shadowRoot.querySelector(`#footer`))
     }
 
