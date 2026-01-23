@@ -1,0 +1,28 @@
+.actions {
+  flex: 0 0 55px;
+  box-sizing: border-box;
+  box-shadow: 0 -3px 3px var(--background-subtle);
+  border-top: 1px var(--border-strong) solid; 
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background-color: var(--background-subtle);
+}
+
+@media (max-width: 599px) {
+  #frame {
+    position: absolute;
+    background-color: var(--background-panel);
+    border: 1px solid var(--border);
+    overflow-x: scroll;
+    width: 100%;
+  }
+}
+
+@media (min-width: 600px) {
+  #frame {
+    height: 100%;
+    max-width: 600px;
+    max-height: 600px;
+  }
+}

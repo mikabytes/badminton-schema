@@ -5,7 +5,7 @@ import user from "features/user.js"
 import { effect } from "./reactive.js"
 import { render, html } from "html"
 import { preload, getTagName } from "./elements/element.js"
-import { getPageFromHash } from "./routing.js"
+import routing, { params } from "./routing.js"
 import "./elements/layout.js"
 
 // clean up the DOM, already loaded scripts are just DOM junk
@@ -22,35 +22,40 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-window.initialPage = getPageFromHash()
+window.initialPage = params(document.location.hash)
+console.log(`initial page was ${JSON.stringify(params)}`)
 
 async function testIsLoggedIn() {
-  if (localStorage.token) {
-    try {
-      // lets test if we can get something
-      const res = await fetch(`/current-user`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.token}`,
-        },
-      })
+  try {
+    if (localStorage.token) {
+      try {
+        // lets test if we can get something
+        const res = await fetch(`/current-user`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.token}`,
+          },
+        })
 
-      if (res.ok) {
-        user.value = await res.json()
-        if (
-          window.initialPage &&
-          window.initialPage.main &&
-          window.initialPage.main !== `login`
-        ) {
-          page.value = window.initialPage
-        } else {
-          page.value = { main: `rsvp` }
+        if (res.ok) {
+          user.value = await res.json()
+          if (
+            window.initialPage &&
+            window.initialPage.main &&
+            window.initialPage.main !== `login`
+          ) {
+            page.value = window.initialPage
+          } else {
+            page.value = { main: `rsvp` }
+          }
+          return
         }
-        return
-      }
-    } catch (e) {}
-  }
+      } catch (e) {}
+    }
 
-  page.value = { main: `login` }
+    page.value = { main: `login` }
+  } finally {
+    routing()
+  }
 }
 
 await preload()

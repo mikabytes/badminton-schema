@@ -1,9 +1,13 @@
 import Element from "./element.js"
-import { html } from "lit-html"
+import { html } from "html"
+import "./actions.js"
+import "./button.js"
 import page from "features/page.js"
 import user from "features/user.js"
 
 class PageLogin extends Element {
+  static css = new URL(`./page-login.css`, import.meta.url)
+
   submit = async (e) => {
     e.preventDefault()
 
@@ -23,7 +27,7 @@ class PageLogin extends Element {
         const json = await res.json()
         localStorage.token = code
         user.value = json
-        page.value = window.initialPage || `rsvp`
+        page.value = window.initialPage || { main: `rsvp` }
         return
       }
     } finally {
@@ -32,33 +36,14 @@ class PageLogin extends Element {
   }
 
   render() {
-    this.setActions(html`<button @click=${this.submit}>Logga in</button>`)
-
     return html`
-      <style>
-        :host {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
-
-        input {
-          height: 40px;
-          padding: 8px;
-          font-size: 16px;
-          text-align: center;
-        }
-
-        input::disabled {
-          color: var(--text-muted);
-        }
-      </style>
-
       <h2>Ange kod</h2>
       <form @submit=${this.submit}>
         <input type="text" id="text" />
       </form>
+      <x-actions>
+        <x-button id="login-button" primary @click=${this.submit}>Logga in</button>
+      </x-actions>
     `
   }
 }

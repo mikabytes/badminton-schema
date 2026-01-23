@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+@media (max-width: 599px) {
+  :host {
+    position: absolute;
+    border-top: 1px var(--border-strong) solid; 
+    box-shadow: 0 -3px 3px var(--background-subtle);
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+@media (min-width: 600px) {
+  :host {
+  }
+}

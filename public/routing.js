@@ -1,16 +1,28 @@
 import { effect } from "./reactive.js"
 import page from "features/page.js"
 
-export function getPageFromHash() {
-  const hash = document.location.hash.split(`#`)[1]
+export function params(url) {
+  const hash = url.split(`#`)[1]
   if (hash) {
     const [main, sub, item] = hash.split(`/`)
     return { main, sub, item }
   }
 }
 
+export function url(params) {
+  const { main, sub, item } = params
+  let hash = `#${main}`
+  if (sub) {
+    hash += `/${sub}`
+    if (item) {
+      hash += `/${item}`
+    }
+  }
+  return hash
+}
+
 export function setPageFromHash() {
-  const details = getPageFromHash()
+  const details = params(document.location.hash)
   if (details) {
     page.value = details
   } else {
@@ -22,17 +34,12 @@ window.addEventListener(`hashchange`, (e) => {
   setPageFromHash()
 })
 
-effect(() => {
-  if (page.value) {
-    const { main, sub, item } = page.value
-    let hash = `#${main}`
-    if (sub) {
-      hash += `/${sub}`
-      if (item) {
-        hash += `/${item}`
-      }
+export default function start() {
+  effect(() => {
+    if (page.value) {
+      const dest = url(page.value)
+      console.log(`Navigating to  ${dest}`)
+      document.location.hash = dest
     }
-
-    document.location.hash = hash
-  }
-})
+  })
+}

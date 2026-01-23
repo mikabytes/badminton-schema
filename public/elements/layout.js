@@ -9,9 +9,9 @@ import Element, { versions } from "./element.js"
 import { html, render } from "html"
 import { effect } from "../reactive.js"
 
-import hmr from "features/hmr.js"
 import showMenu from "features/showMenu.js"
 import page from "features/page.js"
+import user from "features/user.js"
 
 const titles = {
   rsvp: `Bokning`,
@@ -32,8 +32,12 @@ class Layout extends Element {
       }
     }
 
-    const setActions = (it) => {
-      render(it || html``, this.shadowRoot.querySelector(`#footer`))
+    // extra guard in case user navigates to logged in page after
+    // initial render
+    if (!user.value && page.value?.main !== `login`) {
+      window.initialPage = page.value
+      page.value = { main: `login` }
+      return html``
     }
 
     return html`
@@ -53,10 +57,9 @@ class Layout extends Element {
         </button>
       </nav>
       <div id="content">
-        <x-page-${page.value?.main} .setActions=${setActions}></x-page-${page.value}>
+        <x-page-${page.value?.main}></x-page-${page.value}>
       </div>
       <style>#footer:empty { display: none; }</style>
-      <div id="footer" style="z-index: 1;"></div>
       <x-menu id="menu" ?hidden=${!showMenu.value}></x-menu>
 
       ${
@@ -65,7 +68,7 @@ class Layout extends Element {
           : html`
               <div id="sub-curtain" @click=${curtainClick}>
                 <div id="frame">
-                  <x-page-details .setActions=${setActions}></x-page-details>
+                  <x-page-details></x-page-details>
                 </div>
               </div>
             `

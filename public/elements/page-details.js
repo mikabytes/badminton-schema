@@ -61,8 +61,6 @@ class PageDetails extends Element {
     const yeses = eventResponses.filter((e) => e.yes)
     const noes = eventResponses.filter((e) => e.no)
 
-    this.setActions(html`<button @click=${this.remove}>Ta bort</button>`)
-
     return html`
       <button
         id="close"
