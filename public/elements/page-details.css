@@ -1,17 +1,3 @@
-:host {
-  display: block;
-  margin: 0;
-  padding: 16px;
-}
-
-#close {
-  position: absolute;
-  top: 0;
-  right: 0;
-  pointer: cursor;
-  font-size: 28px;
-}
-
 hr {
   margin: 0;
   padding: 0;
@@ -24,6 +10,16 @@ h1 {
   margin: 8px 0 0 0;
   margin-bottom: 10px;
   font-size: 17px;
+}
+
+h3 {
+  display: inline;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+#respond-buttons {
+  display: inline-flex;
 }
 
 button {
@@ -39,17 +35,17 @@ button {
   font-size: 24px;
   padding: 12px;
   border-radius: 3px;
+  border: 1px solid var(--error);
+  width: 100px;
 }
 
 .yes:not(.selected) {
   filter: grayscale(100%);
-  border: none;
   background-color: transparent;
 }
 
 .no:not(.selected) {
   filter: grayscale(100%);
-  border: none;
   background-color: transparent;
 }
 
@@ -105,4 +101,34 @@ img {
 
 .avatar::before {
   content: attr(data-initials);
+}
+
+#number-yeses {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+#no-people {
+  color: var(--text-secondary);
+}
+
+#back {
+  position: absolute;
+}
+
+@media (min-width: 600px) {
+  #back {
+    margin-left: auto;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 599px) {
+  #back {
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }

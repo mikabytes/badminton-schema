@@ -38,7 +38,6 @@ export default function start() {
   effect(() => {
     if (page.value) {
       const dest = url(page.value)
-      console.log(`Navigating to  ${dest}`)
       document.location.hash = dest
     }
   })

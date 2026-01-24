@@ -4,6 +4,7 @@ import "./page-members.js"
 import "./page-rules.js"
 import "./menu.js"
 import "./notifications.js"
+import "./modal.js"
 
 import Element, { versions } from "./element.js"
 import { html, render } from "html"
@@ -24,14 +25,6 @@ class Layout extends Element {
   static css = new URL(`./layout.css`, import.meta.url)
 
   render() {
-    const curtainClick = (e) => {
-      if (e.target === this.shadowRoot.querySelector(`#sub-curtain`)) {
-        delete page.value.sub
-        delete page.value.item
-        page.value = page.value
-      }
-    }
-
     // extra guard in case user navigates to logged in page after
     // initial render
     if (!user.value && page.value?.main !== `login`) {
@@ -66,11 +59,9 @@ class Layout extends Element {
         page.value?.sub !== `details`
           ? html``
           : html`
-              <div id="sub-curtain" @click=${curtainClick}>
-                <div id="frame">
-                  <x-page-details></x-page-details>
-                </div>
-              </div>
+              <x-modal .title="Details">
+                <x-page-details></x-page-details>
+              </x-modal>
             `
       }
     `

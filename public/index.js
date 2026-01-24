@@ -23,7 +23,7 @@ if ("serviceWorker" in navigator) {
 }
 
 window.initialPage = params(document.location.hash)
-console.log(`initial page was ${JSON.stringify(params)}`)
+console.log(`initial page was ${JSON.stringify(window.initialPage)}`)
 
 async function testIsLoggedIn() {
   try {

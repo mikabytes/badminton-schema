@@ -1,5 +1,5 @@
 import Element from "./element.js"
-import { html } from "lit-html"
+import { html } from "html"
 import user from "features/user.js"
 import users from "features/users.js"
 import page from "features/page.js"
@@ -7,6 +7,7 @@ import responses from "features/responses.js"
 import skips from "features/skips.js"
 import rules from "features/rules.js"
 import error from "./error.js"
+import "./button.js"
 import generateEvents from "../events.js"
 
 class PageDetails extends Element {
@@ -62,35 +63,36 @@ class PageDetails extends Element {
     const noes = eventResponses.filter((e) => e.no)
 
     return html`
-      <button
-        id="close"
-        @click=${() => {
-          page.value = { main: `rsvp` }
-        }}
-      >
-        ✕
-      </button>
       <h1>${capitalizeFirst(formatter.format(event.date))}</h1>
       <hr />
       <div class="quick-actions">
-        Mitt svar:
-        <button
-          @click=${() => user.respond(event.id, 1)}
-          class="yes ${myAnswer?.yes ? `selected` : ``}"
-          title="Yes, I'm going"
-        >
-          ✓ Ja</button
-        ><button
-          @click=${() => user.respond(event.id, 0)}
-          class="no ${myAnswer?.no ? `selected` : ``}"
-          title="No, I'm not going"
-        >
-          ✗ Nej
-        </button>
+        <h3>Mitt svar:</h3>
+        <span id="respond-buttons">
+          <button
+            @click=${() => user.respond(event.id, 1)}
+            class="yes ${myAnswer?.yes ? `selected` : ``}"
+            title="Yes, I'm going"
+          >
+            ✓ Ja</button
+          ><button
+            @click=${() => user.respond(event.id, 0)}
+            class="no ${myAnswer?.no ? `selected` : ``}"
+            title="No, I'm not going"
+          >
+            ✗ Nej
+          </button>
+        </span>
       </div>
 
-      <h2>Närvarar (${yeses.length} personer)</h2>
-      ${yeses.length === 0 ? `Ingen har anmält sig till detta event.` : ``}
+      <h2>
+        Närvarar:
+        <span id="number-yeses">(${yeses.length} personer)</span>
+      </h2>
+      ${yeses.length === 0
+        ? html`<span id="no-people"
+            >Ingen har anmält sig till detta event.</span
+          >`
+        : ``}
       <ul>
         ${eventResponses.filter((e) => e.yes).map((e) => this.person(e))}
       </ul>
@@ -103,6 +105,12 @@ class PageDetails extends Element {
               ${eventResponses.filter((e) => e.no).map((e) => this.person(e))}
             </ul>
           `}
+      <x-button
+        id="back"
+        secondary
+        @click=${() => (page.value = { ...page.value, sub: null, item: null })}
+        >Tillbaka</x-button
+      >
     `
   }
 
