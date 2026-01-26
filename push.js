@@ -8,7 +8,7 @@ webPush.setVapidDetails("mailto:mika@wappia.se", publicKey, privateKey)
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const jitter = (ms) => Math.floor(ms * (0.7 + Math.random() * 0.6)) // ±30%
 
-const maxAttempts = 10
+const maxAttempts = 3
 
 export default async function push(
   sub,
@@ -54,7 +54,6 @@ export default async function push(
       }
 
       // 400/401/403 etc: usually config/bug; don't delete the sub
-      console.error(err)
       throw err
     }
   }

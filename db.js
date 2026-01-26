@@ -63,6 +63,21 @@ const Response = sequelize.define(
   }
 )
 
+const NotificationsSent = sequelize.define(
+  `NotificationsSent`,
+  {
+    ts: INTEGER,
+  },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: [`ts`, `userId`],
+      },
+    ],
+  }
+)
+
 const Subscription = sequelize.define(
   `Subscription`,
   {
@@ -88,27 +103,18 @@ Response.belongsTo(User)
 User.hasMany(Subscription)
 Subscription.belongsTo(User)
 
+User.hasMany(NotificationsSent)
+NotificationsSent.belongsTo(User)
+
 await User.sync({ alter: true })
 await Rule.sync({ alter: true })
 await Skip.sync({ alter: true })
 await Response.sync({ alter: true })
 await Subscription.sync({ alter: true })
+await NotificationsSent.sync({ alter: true })
 
 //await Rule.destroy({ where: sql`1 = 1` })
 
-export { User, Rule, Skip, Response, Subscription }
-export default sequelize
-;(async () => {
-  const subscriptions = await Subscription.findAll()
+export { User, Rule, Skip, Response, Subscription, NotificationsSent }
 
-  for (const { userId, json } of subscriptions) {
-    console.log(userId, json)
-    const sub = JSON.parse(json)
-    const result = await push(sub, {
-      title: `Badminton`,
-      body: `Hey, check this out!`,
-      url: `/#members`,
-    })
-    console.log(result)
-  }
-})()
+export default sequelize

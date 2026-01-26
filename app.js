@@ -6,6 +6,8 @@ import logger from "morgan"
 
 import { fileURLToPath } from "url"
 
+import "./reminder.js"
+
 import users from "./routes/users.js"
 import rules from "./routes/rules.js"
 import responses from "./routes/responses.js"
